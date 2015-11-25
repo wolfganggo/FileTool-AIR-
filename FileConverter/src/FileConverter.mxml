@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	title="File Convert/Display Utility"
+	applicationComplete="OnAppComplete()"
+	closing="OnApplicationClosing(event)"
+	backgroundColor="0xC0C0C0"
+	width="1160" height="860">
+
+	<!-- layout="absolute" xmlns:mx="http://www.adobe.com/2006/mxml" -->
+
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FileEvent;
+			import mx.events.FlexEvent;
+			
+			import spark.events.TextOperationEvent;
+			include "actionscript/FileConverter.as";
+		]]>
+	</fx:Script>
+
+	<!-- Package: mx.controls  -->
+	
+	<!--fileChoose="OnFileChoose()"-->
+	<!--itemClick="OnFileChoose()"-->
+	<mx:FileSystemList
+		id="fs_importFiles"
+		showHidden="true"
+		directory="{File.desktopDirectory}"
+		change="OnFileChoose()"
+		directoryChange="OnDirectoryChange(event)"
+		doubleClick="doubleClickHandler(event)"
+		top="10" bottom="690" left="10" right="260"/>
+	<s:Button label="Up"
+		enabled="{fs_importFiles.canNavigateUp}"
+		click="fs_importFiles.navigateUp();" width="40" right="215" top="10"/>
+	<s:Button label="Home" click="OnSetHomePath()" width="55" top="10" right="140"/>
+	<s:Button label="Dir1" click="OnSetCustomPath(1)" width="55" top="10" right="75"/>
+	<s:Button label="Dir2" click="OnSetCustomPath(2)" width="55" top="10" right="10"/>
+	<s:CheckBox id="ch_CString" label="Make C-String Array" width="150" top="50" right="30"/>
+	<s:CheckBox id="ch_LineBreaks" label="Add Line Breaks" width="150" top="70" right="30"/>
+	<s:CheckBox id="ch_Spaces" label="Add Spaces" width="150" top="90" right="30"/>
+	<s:Button label="Convert" click="OnChooseConvertToAscii()" width="80" top="120" right="100"/>
+	<s:Label id="tx_path" bottom="670" left="20" right="100"/>
+	<mx:Image id="img" width="960" height="640" left="10" bottom="10"/>
+	<mx:Image id="img270" width="640" height="640" left="170" bottom="10" rotation="270" visible="false"/>
+	<!-- <mx:Image id="img" width="900" height="600" left="10" bottom="10" source="@Embed(source='/Users/w.goldbach/Pictures/14-old-door.jpg')"/> -->
+	<!-- <s:Image id="img" width="900" height="600" left="10" bottom="10" source="/Users/w.goldbach/Pictures/14-old-door.jpg"/> -->
+	<s:TextArea id="txt" focusEnabled="false"
+				editable="true" text="{copyright}"
+				changing="OnTextChanging(event)"
+				selectionChange="OnTextSelectionChange(event)"
+				width="960" height="640" left="10" bottom="10"/>
+	<s:TextArea id="txt_nb" focusEnabled="false" lineBreak="explicit"
+				editable="true" text="{copyright}"
+				changing="OnTextNBChanging(event)"
+				selectionChange="OnTextNBSelectionChange(event)"
+				width="960" height="640" left="10" bottom="10"/>
+	<!-- <mx:TextArea id="txt" focusEnabled="false"
+				editable="false" wordWrap="false" text="© axaio software gmbh 2014"
+				width="900" height="600" left="10" bottom="10"/> -->
+	<!-- <s:FLVPlayback id="videoplayer" width="800" height="600" left="40" bottom="20"/> -->
+	<s:Group id="videogroup" visible="false" left="70" bottom="10">
+		<s:VideoPlayer id="vplayer" 
+					   width="840"
+					   height="630"
+					   autoPlay="false"
+					   autoDisplayFirstFrame="true"
+		/>
+	</s:Group>	
+	<s:CheckBox id="ch_Wrap" label="Wrap Lines" change="OnWrap(event)" width="170" bottom="620" right="10"/>
+	<s:CheckBox id="ch_Font" label="Arial Font" change="OnFont(event)" width="170" bottom="590" right="10"/>
+	<s:CheckBox id="ch_Binary" label="Binary Display" change="OnBinary(event)" width="170" bottom="560" right="10"/>
+	<s:Label id="tx_size" width="170" bottom="520" right="10"/>
+	<s:Label id="tx_date" width="170" bottom="500" right="10"/>
+	<s:Label id="tx_type" width="170" bottom="480" right="10"/>
+	<s:Label id="tx_imgInfo" width="170" bottom="450" right="10"/>
+	<s:Label id="tx_imgInfo2" width="170" bottom="430" right="10"/>
+	<s:Label id="tx_FileInfo" text="File Info" fontSize="12" fontWeight="bold" width="170" bottom="400" right="10"/>
+	<s:Label id="tx_InfoMake" width="170" bottom="370" right="10"/>
+	<s:Label id="tx_InfoModel" width="170" bottom="352" right="10"/>
+	<s:Label id="tx_InfoDate" width="170" bottom="334" right="10"/>
+	<s:Label id="tx_InfoOrient" width="170" bottom="316" right="10"/>
+	<s:Label id="tx_InfoSens" width="170" bottom="298" right="10"/>
+	<s:Label id="tx_InfoExpo" width="170" bottom="280" right="10"/>
+	<s:Label id="tx_InfoFNum" width="170" bottom="262" right="10"/>
+	<s:Label id="tx_InfoFocal" width="170" bottom="244" right="10"/>
+	<s:Label id="tx_InfoProgram" width="170" bottom="226" right="10"/>
+	<s:Label id="tx_InfoFlash" width="170" bottom="208" right="10"/>
+	<s:Label id="tx_InfoLensMake" width="170" bottom="190" right="10"/>
+	<s:Label id="tx_InfoLensModel" width="170" bottom="172" right="10"/>
+	<s:Label id="tx_InfoMetering" width="170" bottom="154" right="10"/>
+	<s:Label id="tx_InfoWhitebal" width="170" bottom="136" right="10"/>
+	<s:Label id="tx_InfoBias" width="170" bottom="118" right="10"/>
+	<s:Label id="tx_InfoCSpace" width="170" bottom="100" right="10"/>
+	<s:Label id="tx_InfoExpomode" width="170" bottom="82" right="10"/>
+	<s:Label id="tx_InfoLightSource" width="170" bottom="64" right="10"/>
+	<s:Label id="tx_Hint" text="Alt + Cmd/Ctrl for file actions" width="170" bottom="10" right="10"/>
+	<!-- <s:Label id="tx_version" width="170" bottom="10" right="10"/> -->
+	<s:Button id="bt_play" label="PLAY" click="OnPlayAudio()" width="80" bottom="610" left="210"/>
+	<s:Button id="bt_fw1" label="\u003e" click="OnForBack(event)" width="40" bottom="610" left="310"/>
+	<s:Button id="bt_fw2" label="\u003e\u003e" click="OnForBack(event)" width="40" bottom="610" left="370"/>
+	<s:Button id="bt_fw3" label="\u003e\u003e\u003e" click="OnForBack(event)" width="40" bottom="610" left="430"/>
+	<s:Button id="bt_bw1" label="\u003c" click="OnForBack(event)" width="40" bottom="610" left="150"/>
+	<s:Button id="bt_bw2" label="\u003c\u003c" click="OnForBack(event)" width="40" bottom="610" left="90"/>
+	<s:Button id="bt_bw3" label="\u003c\u003c\u003c" click="OnForBack(event)" width="40" bottom="610" left="30"/>
+	<s:Label id="tx_playtime" width="140" height="30" bottom="500" left="200" fontFamily="Courier" fontSize="24"/>
+	<s:Label id="tx_songname" width="300" bottom="610" left="520"/>
+	<s:Label id="tx_artist" width="300" bottom="590" left="520"/>
+	<s:Label id="tx_album" width="300" bottom="570" left="520"/>
+	<s:Label id="tx_year" width="300" bottom="550" left="520"/>
+	<s:Label id="tx_genre" width="300" bottom="530" left="520"/>
+	<s:Label id="tx_track" width="300" bottom="510" left="520"/>
+	<s:Label id="tx_length" width="300" bottom="490" left="520"/>
+	<s:Label id="tx_peakvalue" width="300" bottom="470" left="520"/>
+	<mx:ProgressBar id="progressbar" label="Song Position" mode="manual" indeterminate="false" width="440" bottom="420" left="30"/>
+</s:WindowedApplication>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Window xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 windowComplete="OnWindowComplete()"
+		 windowDeactivate="onWindowDeactivate(event)"
+		 windowActivate="onWindowActivate(event)"
+		 close="onClose(event)"
+		 showStatusBar="false"
+		 resizable="false"
+		 width="1200" height="750"
+		 backgroundColor="0x404040"
+		 >
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+
+	<fx:Script>
+		<![CDATA[
+			include "actionscript/ThumbnailView.as";
+		]]>
+	</fx:Script>
+
+	<s:Group width="150" height="150" x="0" y="0">
+		<mx:Image id="img1" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="150" y="0">
+		<mx:Image id="img2" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="300" y="0">
+		<mx:Image id="img3" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="450" y="0">
+		<mx:Image id="img4" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="600" y="0">
+		<mx:Image id="img5" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="750" y="0">
+		<mx:Image id="img6" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="900" y="0">
+		<mx:Image id="img7" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="1050" y="0">
+		<mx:Image id="img8" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="0" y="150">
+		<mx:Image id="img9" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="150" y="150">
+		<mx:Image id="img10" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="300" y="150">
+		<mx:Image id="img11" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="450" y="150">
+		<mx:Image id="img12" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="600" y="150">
+		<mx:Image id="img13" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="750" y="150">
+		<mx:Image id="img14" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="900" y="150">
+		<mx:Image id="img15" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="1050" y="150">
+		<mx:Image id="img16" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="0" y="300">
+		<mx:Image id="img17" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="150" y="300">
+		<mx:Image id="img18" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="300" y="300">
+		<mx:Image id="img19" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="450" y="300">
+		<mx:Image id="img20" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="600" y="300">
+		<mx:Image id="img21" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="750" y="300">
+		<mx:Image id="img22" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="900" y="300">
+		<mx:Image id="img23" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="1050" y="300">
+		<mx:Image id="img24" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="0" y="450">
+		<mx:Image id="img25" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="150" y="450">
+		<mx:Image id="img26" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="300" y="450">
+		<mx:Image id="img27" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="450" y="450">
+		<mx:Image id="img28" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="600" y="450">
+		<mx:Image id="img29" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="750" y="450">
+		<mx:Image id="img30" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="900" y="450">
+		<mx:Image id="img31" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="1050" y="450">
+		<mx:Image id="img32" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="0" y="600">
+		<mx:Image id="img33" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="150" y="600">
+		<mx:Image id="img34" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="300" y="600">
+		<mx:Image id="img35" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="450" y="600">
+		<mx:Image id="img36" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="600" y="600">
+		<mx:Image id="img37" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="750" y="600">
+		<mx:Image id="img38" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="900" y="600">
+		<mx:Image id="img39" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+	<s:Group width="150" height="150" x="1050" y="600">
+		<mx:Image id="img40" smoothBitmapContent="true" scaleContent="false"/>
+	</s:Group>
+</s:Window>

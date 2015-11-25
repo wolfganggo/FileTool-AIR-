@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Window xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 windowComplete="OnWindowComplete()"
+		 windowResize="windowResizeHandler(event)"
+		 windowDeactivate="windowDeactivateHandler(event)" closing="OnClosing(event)"
+		 showStatusBar="false"
+		 minHeight="400" minWidth="1050"
+		 >
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<!-- <s:RadioButtonGroup id="paymentType" itemClick="handlePayment(event);"/> -->
+	</fx:Declarations>
+
+	<fx:Script>
+		<![CDATA[
+			include "actionscript/TextEditBinView.as";
+		]]>
+	</fx:Script>
+
+	<s:TextArea id="edittx"
+				changing="OnTextChanging(event)"
+				change="OnTextHasChanged(event)"
+				selectionChange="OnTextSelectionChange(event)"
+				fontSize="12" top="0" bottom="20" left="0" right="0"/>
+	<s:Label id="tx_Index" width="220" bottom="3" right="140"/>
+	<s:Label id="tx_code" width="100" bottom="3" right="40"/>
+	<s:Label id="tx_status" text="Cmd/Ctrl-J for hex input" width="170" bottom="3" left="20"/>
+</s:Window>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Window xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 windowComplete="OnWindowComplete()"
+		 title="Create wave file copy"
+		 height="410" width="420"
+		 alwaysInFront="true"
+		 >
+	<fx:Declarations>
+	</fx:Declarations>
+
+	<fx:Script>
+		<![CDATA[
+			include "actionscript/EditWaveView.as";
+		]]>
+	</fx:Script>
+
+	<s:Label text="Begin (sec):" top="25" left="10" width="80"/>
+	<s:Label text="Length (sec):" top="25" left="210" width="80"/>
+	<s:TextInput id="tx_begin"
+				fontSize="12" top="20" left="90" width="100" height="18"/>
+	<s:TextInput id="tx_len"
+				 fontSize="12" top="20" left="290" width="100" height="18"/>
+	<s:CheckBox id="ch_ms" label="Enter values in milliseconds" left="90" width="200" top="60"/>
+	<s:CheckBox id="ch_norm" label="Normalize" left="90" width="200" top="110"/>
+	<s:CheckBox id="ch_swap" label="Swap left and right channel" left="90" width="200" top="140"/>
+	<s:CheckBox id="ch_convert" label="Convert 96k to 44.1k (16 bit)" left="90" width="200" top="170"/>
+	
+	<s:CheckBox id="ch_fadeIn" label="Fade In" left="90" width="80" top="200"/>
+	<s:RadioButton groupName="rbGroupIn" id="rb_in2" label="2 seconds" width="80" left="210" top="200"/>
+	<s:RadioButton groupName="rbGroupIn" id="rb_in5" label="5 seconds" width="80" left="210" top="220"/>
+	<s:RadioButton groupName="rbGroupIn" id="rb_in10" label="10 seconds" width="80" left="210" top="240"/>
+	<s:CheckBox id="ch_fadeOut" label="Fade Out" left="90" width="80" top="270"/>
+	<s:RadioButton groupName="rbGroupOut" id="rb_out2" label="2 seconds" width="80" left="210" top="270"/>
+	<s:RadioButton groupName="rbGroupOut" id="rb_out5" label="5 seconds" width="80" left="210" top="290"/>
+	<s:RadioButton groupName="rbGroupOut" id="rb_out10" label="10 seconds" width="80" left="210" top="310"/>
+	
+	<s:Button id="bt_cancel" label="Cancel" right="100" bottom="10" width="60" buttonDown="OnCancel(event)"/>
+	<s:Button id="bt_ok" label="Create" right="20" bottom="10" width="60" buttonDown="OnOK(event)"/>
+</s:Window>

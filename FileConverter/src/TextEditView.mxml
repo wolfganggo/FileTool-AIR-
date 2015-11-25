@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Window xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 windowComplete="OnWindowComplete()"
+		 windowResize="windowResizeHandler(event)"
+		 windowDeactivate="windowDeactivateHandler(event)" closing="OnClosing(event)"
+		 showStatusBar="false"
+		 minHeight="400" minWidth="600"
+		 >
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<!-- <s:RadioButtonGroup id="paymentType" itemClick="handlePayment(event);"/> -->
+		<s:RadioButtonGroup id="rbGroup" itemClick="OnRadioBtnGroup(event);"/>
+	</fx:Declarations>
+
+	<fx:Script>
+		<![CDATA[
+			include "actionscript/TextEditView.as";
+		]]>
+	</fx:Script>
+
+	<s:TextArea id="edittx"
+				changing="OnTextChanging(event)"
+				selectionChange="OnTextSelectionChange(event)"
+				fontSize="12" top="0" bottom="20" left="0" right="0"/>
+	<s:Label id="tx_Index" width="60" bottom="3" right="150"/>
+	<s:Label id="tx_Line" width="60" bottom="3" right="80"/>
+	<s:Label id="tx_Column" width="60" bottom="3" right="10"/>
+	<s:Label id="tx_Mem" width="60" bottom="3" left="270" fontFamily="Courier" text="........."/>
+	<s:Label id="tx_Info" width="30" bottom="3" left="350" fontFamily="Courier" text=". ."/>
+	<s:RadioButton groupName="rbGroup" id="rb_ascii" label="Ascii" width="50" bottom="3" left="10"/>
+	<s:RadioButton groupName="rbGroup" id="rb_mac" label="Mac" width="50" bottom="3" left="70"/>
+	<s:RadioButton groupName="rbGroup" id="rb_win" label="Win" width="50" bottom="3" left="130"/>
+	<s:RadioButton groupName="rbGroup" id="rb_utf8" label="UTF8" width="50" bottom="3" left="190"/>
+</s:Window>
