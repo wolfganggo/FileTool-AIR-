@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Window xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 windowComplete="OnWindowComplete()"
+		 height="120" width="180"
+		 backgroundColor="0xCCCCCC"
+		 alwaysInFront="true"
+		 >
+	<fx:Declarations>
+	</fx:Declarations>
+
+	<fx:Script>
+		<![CDATA[
+			include "actionscript/ExtensionView.as";
+		]]>
+	</fx:Script>
+
+	<s:TextInput id="edittx"
+				change="OnTextChanged(event)"
+				fontSize="12" top="10" left="20" width="100" height="20"/>
+	<s:Button id="bt_cancel" label="Cancel" left="20" bottom="10" width="60" buttonDown="OnCancel(event)"/>
+	<s:Button id="bt_ok" label="OK" left="100" bottom="10" width="60" buttonDown="OnOK(event)"/>
+</s:Window>

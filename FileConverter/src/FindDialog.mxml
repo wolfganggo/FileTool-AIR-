@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Window xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 windowComplete="OnWindowComplete()"
+		 height="320" width="400"
+		 alwaysInFront="true"
+		 backgroundColor="0xCCCCCC"
+		 >
+	<fx:Declarations>
+	</fx:Declarations>
+
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			import spark.events.TextOperationEvent;
+			import mx.core.FlexGlobals;
+
+			
+			static private var isCaseSensitive_:Boolean = false;
+			static private var isWholeWords_:Boolean = false;
+
+			public var replaceAction_:Boolean = false;
+			public var replaceAllAction_:Boolean = false;
+			public var initString_:String = "";
+			public var findString_:String = "";
+			public var replaceString_:String = "";
+			public var editView_:TextEditView = null;
+			private var timer_:Timer = null;
+			private var findEntries_:Array = null;
+			private var replaceEntries_:Array = null;
+			private var findEntryIx_:int = -1;
+			private var replEntryIx_:int = -1;
+
+			private function OnWindowComplete():void
+			{
+				this.addEventListener (KeyboardEvent.KEY_DOWN, OnKeyDown);
+				tx_find.addEventListener (KeyboardEvent.KEY_DOWN, OnFindKeyDown);
+				tx_replace.addEventListener (KeyboardEvent.KEY_DOWN, OnReplaceKeyDown);
+				ch_case.selected = isCaseSensitive_;
+				ch_words.selected = isWholeWords_;
+				tx_find.text = initString_;
+				findEntries_ = FlexGlobals.topLevelApplication.getFindStrings();
+				replaceEntries_ = FlexGlobals.topLevelApplication.getReplaceStrings();
+				showOccurences();
+				tx_find.setFocus();
+			}
+			
+			protected function OnKeyDown(event:KeyboardEvent):void
+			{
+				var isControlKey:Boolean = event.ctrlKey; // Mac: Ctrl or Cmnd
+				var key:uint = event.keyCode;
+				if (key == Keyboard.ESCAPE) {
+					this.close();
+				}
+				else if (key == Keyboard.W && isControlKey) {
+					this.close();
+				}
+			}
+			
+			protected function OnFindKeyDown(event:KeyboardEvent):void
+			{
+				if (findEntries_ == null || findEntries_.length == 0) {
+					return;
+				}
+				var key:uint = event.keyCode;
+				if (key == Keyboard.DOWN) {
+					addCurFindString();
+					findEntryIx_++;
+					if (findEntryIx_ >= findEntries_.length) {
+						findEntryIx_ = 0;
+					}
+					if (tx_find.text == findEntries_[findEntryIx_] && findEntryIx_ < findEntries_.length - 1) {
+						findEntryIx_++;
+					}
+					tx_find.text = findEntries_[findEntryIx_];
+					showOccurences();
+				}
+				else if (key == Keyboard.UP) {
+					addCurFindString();
+					findEntryIx_--;
+					if (findEntryIx_ < 0) {
+						findEntryIx_ = findEntries_.length - 1;
+					}
+					tx_find.text = findEntries_[findEntryIx_];
+					showOccurences();
+				}
+				else {
+					findEntryIx_ = -1;
+				}
+			}
+			
+			protected function OnReplaceKeyDown(event:KeyboardEvent):void
+			{
+				if (replaceEntries_ == null || replaceEntries_.length == 0) {
+					return;
+				}
+				var key:uint = event.keyCode;
+				if (key == Keyboard.DOWN) {
+					addCurReplaceString();
+					replEntryIx_++;
+					if (replEntryIx_ >= replaceEntries_.length) {
+						replEntryIx_ = 0;
+					}
+					if (tx_replace.text == replaceEntries_[replEntryIx_] && replEntryIx_ < replaceEntries_.length - 1) {
+						replEntryIx_++;
+					}
+					tx_replace.text = replaceEntries_[replEntryIx_];
+				}
+				else if (key == Keyboard.UP) {
+					addCurReplaceString();
+					replEntryIx_--;
+					if (replEntryIx_ < 0) {
+						replEntryIx_ = replaceEntries_.length - 1;
+					}
+					tx_replace.text = replaceEntries_[replEntryIx_];
+				}
+				else {
+					replEntryIx_ = -1;
+				}
+			}
+			
+			protected function OnTextChanging (event:TextOperationEvent):void
+			{
+				if (timer_ != null) {
+					timer_.stop();
+					timer_  = null;
+				}
+				timer_ = new Timer(1000, 1);
+				timer_.addEventListener (TimerEvent.TIMER, OnTextChangeTimer);
+				timer_.start();
+			}
+			
+			private function OnTextChangeTimer (event:TimerEvent):void
+			{
+				showOccurences();
+			}
+			
+			protected function onFind (event:FlexEvent):void
+			{
+				commit();
+			}
+			
+			protected function onReplace (event:FlexEvent):void
+			{
+				replaceAction_ = true;
+				replaceString_ = tx_replace.text;
+				commit();
+			}
+			
+			protected function onReplaceAll (event:FlexEvent):void
+			{
+				replaceAction_ = true;
+				replaceAllAction_ = true;
+				replaceString_ = tx_replace.text;
+				commit();
+			}
+			
+			private function commit():void
+			{
+				isCaseSensitive_ = ch_case.selected;
+				isWholeWords_ = ch_words.selected;
+				addCurFindString();
+				addCurReplaceString();
+				if (editView_ != null) {
+					editView_.startFind (replaceAction_, replaceAllAction_);
+				}
+				if (replaceAction_) {
+					showOccurences();
+					replaceAction_ = false;
+					replaceAllAction_ = false;
+				}
+			}
+
+			private function addCurFindString():void
+			{
+				findString_ = tx_find.text;
+				if (findString_.length > 0) {
+					if (findEntries_ == null) {
+						findEntries_ = new Array();
+					}
+					if (findEntries_.indexOf (findString_) < 0) {
+						if (findEntries_.length > 9) {
+							findEntries_.length = 9;
+						}
+						findEntries_.unshift (findString_);
+						FlexGlobals.topLevelApplication.setFindStrings (findEntries_);
+					}
+				}
+			}
+			
+			private function addCurReplaceString():void
+			{
+				replaceString_ = tx_replace.text;
+				if (replaceString_.length > 0) {
+					if (replaceEntries_ == null) {
+						replaceEntries_ = new Array();
+					}
+					if (replaceEntries_.indexOf (replaceString_) < 0) {
+						if (replaceEntries_.length > 9) {
+							replaceEntries_.length = 9;
+						}
+						replaceEntries_.unshift (replaceString_);
+						FlexGlobals.topLevelApplication.setReplaceStrings (replaceEntries_);
+					}
+				}
+			}
+			
+			
+			protected function OnCancel (event:FlexEvent):void
+			{
+				this.close();
+			}
+			
+			protected function onCheckbox (event:Event):void
+			{
+				showOccurences();
+			}
+			
+			private function showOccurences():void
+			{
+				if (editView_ != null) {
+					tx_info.text = editView_.findTextCount (tx_find.text, ch_case.selected, ch_words.selected).toString() + " occurences";
+				}
+			}
+			
+			public function getCaseSensitive():Boolean
+			{
+				return isCaseSensitive_;
+			}
+
+			public function getIsWholeWords():Boolean
+			{
+				return isWholeWords_;
+			}
+			
+			public function setSearchString (s:String):void
+			{
+				initString_ = s;
+			}
+			
+		]]>
+	</fx:Script>
+
+	<s:TextInput id="tx_find" changing="OnTextChanging(event)" fontSize="12" top="20" left="20" width="360"/>
+	<!-- <s:ComboBox id="tx_find" changing="OnTextChanging(event)" fontSize="12" top="20" left="20" width="360">
+		<s:dataProvider>
+			<mx:ArrayList>
+				<fx:String>Red</fx:String>
+			</mx:ArrayList>
+		</s:dataProvider>
+	</s:ComboBox> -->
+	<s:TextInput id="tx_replace" fontSize="12" top="110" left="20" width="360"/>
+	<!-- <s:ComboBox id="tx_replace" fontSize="12" top="110" left="20" width="360">
+		<s:dataProvider>
+			<mx:ArrayList>
+				<fx:String>Red</fx:String>
+			</mx:ArrayList>
+		</s:dataProvider>
+	</s:ComboBox> -->
+		
+	<s:Label id="tx_info" text="" top="60" left="20" width="100"/>
+	<s:CheckBox id="ch_words" label="Whole words" left="20" top="170" width="100" change="onCheckbox(event)"/>
+	<s:CheckBox id="ch_case" label="Case sensitive" left="20" top="200" width="100" change="onCheckbox(event)"/>
+	<s:Button id="bt_find" label="Find" right="20" top="60" width="90" buttonDown="onFind(event)"/>
+	<s:Button id="bt_replace" label="Replace" right="20" top="160" width="90" buttonDown="onReplace(event)"/>
+	<s:Button id="bt_replaceAll" label="Replace All" right="20" top="200" width="90" buttonDown="onReplaceAll(event)"/>
+	<s:Button id="bt_cancel" label="Close" right="20" bottom="20" width="90" buttonDown="OnCancel(event)"/>
+</s:Window>

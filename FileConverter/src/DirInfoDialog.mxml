@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Window xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 windowComplete="OnWindowComplete()"
+		 height="300" width="400"
+		 backgroundColor="0xCCCCCC"
+		 alwaysInFront="true"
+		 >
+	<fx:Declarations>
+	</fx:Declarations>
+
+	<fx:Script>
+		<![CDATA[
+			private var _message:String;
+			
+			private function OnWindowComplete():void
+			{
+				this.addEventListener (KeyboardEvent.KEY_DOWN, OnKeyDown);
+				bt_ok.setFocus();
+			}
+
+			protected function OnKeyDown(event:KeyboardEvent):void
+			{
+				var isControlKey:Boolean = event.ctrlKey;
+				var isShiftKey:Boolean = event.shiftKey;
+				var key:uint = event.keyCode;
+				if (key == Keyboard.ESCAPE || key == Keyboard.ENTER) {
+					this.close();
+				}
+			}
+			
+			[Bindable]
+			public function get message():String {
+				return _message;
+			}
+			
+			public function set message(value:String):void {
+				_message = value;
+			}
+			
+			private function onClick():void {
+				super.close();
+			}
+			
+		]]>
+	</fx:Script>
+
+	<s:Label id="infotxt" text="{message}"
+				top="10" left="20" width="360" height="240"/>
+	<s:Button id="bt_ok" label="OK" right="20" bottom="10" width="60" click="onClick()"/>
+</s:Window>

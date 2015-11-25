@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Window xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 windowComplete="OnWindowComplete()"
+		 showStatusBar="false"
+		 height="200" width="500"
+		 maximizable="false"
+		 resizable="false"
+		 alwaysInFront="true"
+		 backgroundColor="0xDDDDDD"
+		 >
+	<fx:Declarations>
+	</fx:Declarations>
+
+	<fx:Script>
+		<![CDATA[
+			import flash.events.KeyboardEvent;
+			import flash.ui.Keyboard;
+			import mx.core.FlexGlobals;
+			
+			private function OnWindowComplete():void
+			{
+				this.addEventListener (KeyboardEvent.KEY_DOWN, OnKeyDown);
+				this.setFocus();
+			}
+			
+			protected function OnKeyDown(event:KeyboardEvent):void
+			{
+				var isControlKey:Boolean = event.ctrlKey;
+				var isShiftKey:Boolean = event.shiftKey;
+				var key:uint = event.keyCode;
+				
+				if (key >= Keyboard.NUMBER_1 && key <= Keyboard.NUMBER_9) {
+					FlexGlobals.topLevelApplication.setEditorMemoryNumber (key - Keyboard.NUMBER_1 + 1);
+				}
+				this.close();
+			}
+		]]>
+	</fx:Script>
+
+	<s:Label text="Press key 1 - 9 to save the copied text to one of the memories," width="450" top="60" left="40"/>
+	<s:Label text="press any other key to proceed without saving to memory." width="450" top="90" left="40"/>
+</s:Window>
