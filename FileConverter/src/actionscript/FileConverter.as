@@ -35,7 +35,7 @@ import flashx.textLayout.operations.CopyOperation;
 import flashx.textLayout.operations.FlowOperation;
 
 
-[Bindable] private var copyright:String = "© axaio software gmbh 2015";
+[Bindable] private var copyright:String = "axaio software gmbh 2015";
 
 public var prefs_:Preferences = null;
 public var fontFamilyCourier_:String = "Courier";
@@ -1665,12 +1665,6 @@ protected function OnKeyDown(event:KeyboardEvent):void
 	var isAltKey:Boolean = event.altKey;
 	var isShiftKey:Boolean = event.shiftKey;
 	var key:uint = event.keyCode;
-	//if (key == Keyboard.S && isControlKey) {
-
-	
-	//var msg:String = "Key pressed: ";
-	//msg += key.toString(10);
-	//Alert.show (msg, "Message", Alert.OK, this);
 	
 	if (key == Keyboard.LEFT) {
 		if (fs_importFiles.canNavigateUp) {
@@ -1700,18 +1694,10 @@ protected function OnKeyDown(event:KeyboardEvent):void
 			doubleClickHandler_ (fs_importFiles.selectedPath);
 		}
 	}
-	//else if (key == Keyboard.BACKSPACE && isControlKey) {
 	else if (key == Keyboard.DELETE && isAltKey) {
 		DeleteAction();
 	}
-	//else if (key == Keyboard.D && isAltKey) {
-	else if (isControlKey && isAltKey) {
-		var actionWindow:ChooseActionView = new ChooseActionView();
-		actionWindow.open();
-		isAltKey_ = false;
-		return;
-	}
-	isAltKey_ = isAltKey;
+	//isAltKey_ = isAltKey;
 }
 
 private function DeleteAction():void
@@ -1807,8 +1793,18 @@ private function OnAfterDelNewTimer (event:TimerEvent):void
 
 protected function OnAppKeyDown(event:KeyboardEvent):void
 {
-	isAltKey_ = event.altKey;
-	isControlKey_ = event.ctrlKey;
+	var isControlKey:Boolean = event.ctrlKey;
+	var isAltKey:Boolean = event.altKey;
+	
+	if (isControlKey && isAltKey) {
+		var actionWindow:ChooseActionView = new ChooseActionView();
+		actionWindow.open();
+		isAltKey_ = false;
+		isControlKey_ = false;
+		return;
+	}
+	isAltKey_ = isAltKey;
+	isControlKey_ = isControlKey;
 }
 
 protected function OnAppKeyUp(event:KeyboardEvent):void

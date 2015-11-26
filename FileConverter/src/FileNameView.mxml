@@ -3,6 +3,7 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 windowComplete="OnWindowComplete()"
+		 title="Edit File Name"
 		 height="370" width="600"
 		 backgroundColor="0xCCCCCC"
 		 alwaysInFront="true"

@@ -26,7 +26,8 @@
 	<!-- An application version designator (such as "v1", "2.5", or "Alpha 1"). Required. old from Flex 3 -->
 	<!-- <version>0.1.001</version> -->
 	<!-- A string value of the format <0-999>.<0-999>.<0-999> --> 
-	<versionNumber>1.4.0</versionNumber>
+	<!-- *** Change also in ChooseActionView.mxml *** -->
+	<versionNumber>2.1.0</versionNumber>
 	<!-- A string value (such as "v1", "2.5", or "Alpha 1") --> 
 	<!-- <versionLabel></versionLabel> -->
 

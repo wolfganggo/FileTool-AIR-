@@ -4,7 +4,7 @@
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 windowComplete="OnWindowComplete()"
 		 showStatusBar="false"
-		 height="420" width="580"
+		 height="500" width="580"
 		 maximizable="false"
 		 resizable="false"
 		 alwaysInFront="true"
@@ -39,29 +39,39 @@
 		]]>
 	</fx:Script>
 
-	<s:Label id="text11" text="B : Edit file binary" width="150" top="20" left="40"/>
-	<s:Label id="text12" text="C : Copy file(s)" width="150" top="50" left="40"/>
-	<s:Label id="text2" text="D : Duplicate file" width="150" top="80" left="40"/>
-	<s:Label id="text5" text="E : Extension change" width="150" top="110" left="40"/>
-	<s:Label id="text9" text="F : New folder" width="150" top="140" left="40"/>
-	<s:Label id="text8" text="I : Get directory info" width="150" top="170" left="40"/>
+	<s:Label id="headline" text="Press key for one of the actions or any other key to close this window" width="500" top="20" left="40"/>
+
+	<s:Label id="text11" text="B : Edit file binary" width="150" top="50" left="40"/>
+	<s:Label id="text12" text="C : Copy file(s)" width="150" top="75" left="40"/>
+	<s:Label id="text2" text="D : Duplicate file" width="150" top="100" left="40"/>
+	<s:Label id="text5" text="E : Extension change" width="150" top="125" left="40"/>
+	<s:Label id="text9" text="F : New folder" width="150" top="150" left="40"/>
+	<s:Label id="text8" text="I : Get directory info" width="150" top="175" left="40"/>
 	<s:Label id="text3" text="M : Move file(s)" width="150" top="200" left="40"/>
 	
-	<s:Label id="text13" text="N : New text file" width="150" top="20" left="300"/>
-	<s:Label id="text4" text="R : Rename file" width="150" top="50" left="300"/>
-	<s:Label id="text10" text="T : View thumbnails" width="150" top="80" left="300"/>
-	<s:Label id="text6" text="W : Edit wave file" width="150" top="110" left="300"/>
-	<s:Label id="text1" text="X : Move file(s) to trash" width="150" top="140" left="300"/>
-	<s:Label id="text7" text="Y : Copy file(s) without resources" width="250" top="170" left="300"/>
-	<s:Label id="text14" text="Z : Remove files with name .DS_Store" width="250" top="200" left="300"/>
+	<s:Label id="text13" text="N : New text file" width="150" top="50" left="300"/>
+	<s:Label id="text4" text="R : Rename file" width="150" top="75" left="300"/>
+	<s:Label id="text10" text="T : View thumbnails" width="150" top="100" left="300"/>
+	<s:Label id="text6" text="W : Edit wave file" width="150" top="125" left="300"/>
+	<s:Label id="text1" text="X : Move file(s) to trash" width="150" top="150" left="300"/>
+	<s:Label id="text7" text="Y : Copy file(s) without resources (slow!)" width="250" top="175" left="300"/>
+	<s:Label id="text14" text="Z : Remove files with name .DS_Store recursive" width="250" top="200" left="300"/>
 
-	<s:Label id="helptext1" text="Moving file to trash is also possible with Alt + Delete." width="380" top="260" left="50"/>
-	<s:Label id="helptext2" text="The button [Dir] can be configured to go to a special directory." width="380" top="275" left="50"/>
-	<s:Label id="helptext3" text="To save the current directory press [Dir] with Alt key down." width="380" top="290" left="50"/>
-	<s:Label id="helptext4" text="Double click on a list entry to open text editor or image window." width="380" top="305" left="50"/>
-	<s:Label id="helptext5" text="The image window remembers its size, but resizes for smaller images." width="380" top="320" left="50"/>
-	<s:Label id="helptext6" text="Use '+' or 'Z' to zoom in, '-' or 'B' to zoom out." width="380" top="335" left="50"/>
-	<s:Label id="helptext7" text="Move zoomed image with the arrow keys." width="380" top="350" left="50"/>
-	<s:Label id="helptext8" text="Arrow keys go to next or previous when zoom level is zero." width="380" top="365" left="50"/>
-	<s:Label id="helptext9" text="In text editor Cmd/Ctrl-M saves selection to memory." width="380" top="380" left="50"/>
+	<s:Label id="helptext1" text="Moving file to trash is also possible with Alt + Delete." width="500" top="240" left="40"/>
+	<s:Label id="helptext2" text="The button [Dir] can be configured to go to a special directory." width="500" top="255" left="40"/>
+	<s:Label id="helptext3" text="To save the current directory press [Dir] with Alt key down." width="500" top="270" left="40"/>
+	<s:Label id="helptext9" text="In text editor Cmd/Ctrl-M saves the current selection to one of the memories." width="500" top="285" left="40"/>
+	<s:Label id="helptext91" text="To insert text from memory press Cmd/Ctrl-number, with number = 1...9." width="500" top="300" left="40"/>
+	<s:Label id="helptext92" text="Search/Replace with Cmd/Ctrl-F" width="500" top="315" left="40"/>
+	<s:Label id="helptext93" text="Cmd/Ctrl-S to save, Shift-Cmd/Ctrl-S to save as, Cmd/Ctrl-W to close editor" width="500" top="330" left="40"/>
+	
+	<s:Label id="helptext4" text="Double click on a list entry to open text editor or image window." width="500" top="350" left="40"/>
+	<s:Label id="helptext5" text="The image window remembers its size, but resizes temporary for smaller images." width="500" top="365" left="40"/>
+	<s:Label id="helptext6" text="Use '+' or 'Z' to zoom in, '-' or 'B' to zoom out." width="500" top="380" left="40"/>
+	<s:Label id="helptext7" text="Move zoomed image with the arrow keys." width="500" top="395" left="40"/>
+	<s:Label id="helptext8" text="Arrow keys go to the next or previous image when zoom level is zero." width="500" top="410" left="40"/>
+	<s:Label id="helptext81" text="Press 'I' in the image window to see info." width="500" top="425" left="40"/>
+	<s:Label id="helptext83" text="The thumbnail images are only created at the first use or after a change, else they are cached." width="500" top="440" left="40"/>
+
+	<s:Label id="version" text="Version 2.1.0" width="500" top="465" left="40"/>
 </s:Window>
