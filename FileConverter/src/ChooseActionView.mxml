@@ -4,7 +4,7 @@
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 windowComplete="OnWindowComplete()"
 		 showStatusBar="false"
-		 height="500" width="580"
+		 height="535" width="580"
 		 maximizable="false"
 		 resizable="false"
 		 alwaysInFront="true"
@@ -57,7 +57,7 @@
 	<s:Label id="text7" text="Y : Copy file(s) without resources (slow!)" width="250" top="175" left="300"/>
 	<s:Label id="text14" text="Z : Remove files with name .DS_Store recursive" width="250" top="200" left="300"/>
 
-	<s:Label id="helptext1" text="Moving file to trash is also possible with Alt + Delete." width="500" top="240" left="40"/>
+	<s:Label id="helptext1" text="Moving file to trash is also possible with Alt-Delete." width="500" top="240" left="40"/>
 	<s:Label id="helptext2" text="The button [Dir] can be configured to go to a special directory." width="500" top="255" left="40"/>
 	<s:Label id="helptext3" text="To save the current directory press [Dir] with Alt key down." width="500" top="270" left="40"/>
 	<s:Label id="helptext9" text="In text editor Cmd/Ctrl-M saves the current selection to one of the memories." width="500" top="285" left="40"/>
@@ -73,5 +73,8 @@
 	<s:Label id="helptext81" text="Press 'I' in the image window to see info." width="500" top="425" left="40"/>
 	<s:Label id="helptext83" text="The thumbnail images are only created at the first use or after a change, else they are cached." width="500" top="440" left="40"/>
 
-	<s:Label id="version" text="Version 2.1.0" width="500" top="465" left="40"/>
+	<s:Label id="helptext100" text="The button [Convert] creates a text representation of any binary file." width="500" top="460" left="40"/>
+	<s:Label id="helptext101" text="The button [Convert] recreates the binary file when the extension is 'binhex'." width="500" top="475" left="40"/>
+
+	<s:Label id="version" text="Version 2.1.1" width="500" top="500" left="40"/>
 </s:Window>
