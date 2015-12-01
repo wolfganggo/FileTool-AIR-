@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SkinnablePopUpContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 backgroundColor="0x898989"
+		 height="280" width="400" x="200" y="400"
+		 creationComplete="OnWindowComplete(event)"
+		 >
+	<fx:Declarations>
+	</fx:Declarations>
+
+	<fx:Script>
+		<![CDATA[
+			import mx.core.FlexGlobals;
+			import mx.events.FlexEvent;
+			
+			import spark.events.TextOperationEvent;
+
+			static private var extension_:String = "";
+
+			protected function OnWindowComplete (event:FlexEvent):void
+			{
+				edittx.text = extension_;
+			}
+			
+			protected function OnCancel (event:FlexEvent):void
+			{
+				this.close (false);
+			}
+			
+			protected function OnOK (event:FlexEvent):void
+			{
+				extension_ = edittx.text;
+				close (true, extension_);
+			}
+			
+			
+			protected function OnTextChanging (event:TextOperationEvent):void
+			{
+				extension_ = edittx.text;
+			}
+			
+			
+		]]>
+	</fx:Script>
+
+	<s:TextInput id="edittx"
+				changing="OnTextChanging(event)"
+				top="30" left="20" width="200"/>
+	<s:Button id="bt_cancel" label="Cancel" left="20" bottom="20" width="160" buttonDown="OnCancel(event)"/>
+	<s:Button id="bt_ok" label="OK" right="20" bottom="20" width="160" buttonDown="OnOK(event)"/>
+</s:SkinnablePopUpContainer>

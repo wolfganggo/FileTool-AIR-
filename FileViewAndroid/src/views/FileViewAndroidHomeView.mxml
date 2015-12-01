@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:View xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark"
+		xmlns:mx="library://ns.adobe.com/flex/mx"
+		title="HomeView"
+		creationComplete="OnViewComplete(event)"
+		viewDeactivate="OnApplicationClosing(event)"
+		viewActivate="onViewActivate(event)"
+		>
+	<fx:Script>
+		<![CDATA[
+			include "../actionscript/FileView.as";
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<s:viewMenuItems>
+		<s:ViewMenuItem label="Edit Name" click="onEditName(event);"/>
+		<s:ViewMenuItem label="Edit Extension" click="onEditExtension(event);"/>
+		<s:ViewMenuItem label="Duplicate" click="onDuplicate(event);"/>
+		<s:ViewMenuItem label="Copy" click="onCopyFile(event);"/>
+		<s:ViewMenuItem label="Move" click="onMoveFile(event);"/>
+		<s:ViewMenuItem label="Delete" click="onDelete(event);"/>
+		<s:ViewMenuItem label="New Text File" click="onNewFile(event);"/>
+		<s:ViewMenuItem label="New Folder" click="onCreateFolder(event);"/>
+		<s:ViewMenuItem label="Dir Info" click="onGetInfo(event);"/>
+		<s:ViewMenuItem label="Multiple Selection" id="menuMulSel" click="onMultipleSelection(event);"/>
+		<s:ViewMenuItem label="Set Dir1" click="onSetDir1(event);"/>
+		<s:ViewMenuItem label="Set Dir2" click="onSetDir2(event);"/>
+		<s:ViewMenuItem label="Clean Files" click="onClean(event);"/>
+		<s:ViewMenuItem label="Show Debug Log" click="onShowLog(event);"/>
+	</s:viewMenuItems>
+	<s:actionContent>
+		<s:Button label="Menu" click="onButtonMenu(event);"/>
+	</s:actionContent>
+
+	<s:List id="filelist"
+			change="selectHandler(event)"
+			height="600" left="0" right="0" top="0"
+			interactionMode="touch"
+			itemRenderer="actionscript.ListColorRenderer">
+		<s:dataProvider>
+			<s:ArrayList>
+				<fx:Object 
+					label="No entry available"
+				/>
+			</s:ArrayList>
+			<!-- <mx:ArrayCollection>
+				<fx:String>No entry available</fx:String> 
+			</mx:ArrayCollection> -->
+		</s:dataProvider>
+	</s:List>
+	<!-- <s:List contentBackgroundColor="0xabcdef"> -->
+	
+	<s:Label id="st_path" left="10" right="10" top="740" text="?"/>
+	<s:Button id="bt_up" x="20" y="620" width="140" label="Up" click="onButtonUp(event)"/>
+	<s:Button id="bt_home" x="180" y="620" width="140" label="Home" click="onButtonHome(event)"/>
+	<s:Button id="bt_dir1" x="340" y="620" width="140" label="Dir1" click="onButtonDir1(event)"/>
+	<s:Button id="bt_dir2" x="500" y="620" width="140" label="Dir2" click="onButtonDir2(event)"/>
+	<s:CheckBox id="ch_Binary" x="720" y="620" width="240" label="Binary" click="onChBinary(event)"/>
+	<s:CheckBox id="ch_Full" x="960" y="620" width="240" label="Full Content" click="onChFull(event)"/>
+	<s:Label id="st_date" x="10" y="780" width="380" text="?"/>
+	<s:Label id="st_size" x="10" y="820" width="500" text="?"/>
+	<s:Label id="st_imginfo" x="10" y="860" width="380" text="?"/>
+
+	<s:Label id="tx_InfoMake" x="390" y="780" width="360" text="?"/>
+	<s:Label id="tx_InfoModel" x="390" y="820" width="360" text="?"/>
+	<s:Label id="tx_InfoDate" x="390" y="860" width="360" text="?"/>
+	<s:Label id="tx_InfoSens" x="390" y="900" width="360" text="?"/>
+	<s:Label id="tx_InfoExpo" x="760" y="780" width="360" text="?"/>
+	<s:Label id="tx_InfoFNum" x="760" y="820" width="360" text="?"/>
+	<s:Label id="tx_InfoFocal" x="760" y="860" width="360" text="?"/>
+	<s:Label id="tx_InfoFlash" x="760" y="900" width="360" text="?"/>
+	
+	<s:TextArea id="tx_view" editable="false" bottom="0" left="0" right="0" height="800" fontSize="18" text="© axaio software gmbh 2015"/>
+	<s:Image id="img" bottom="0" left="0" right="0" height="800" smooth="true"/>
+	<s:Image id="img_vt" bottom="0" left="200" height="800" width="800" smooth="true"/>
+</s:View>

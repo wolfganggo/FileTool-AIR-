@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:IconItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					xmlns:s="library://ns.adobe.com/flex/spark"
+					labelField="label"
+					>
+
+	<!-- iconFunction="listIconFunction" iconWidth="48" iconHeight="48" iconField="icon" -->
+	<fx:Script>
+		<![CDATA[
+			//[Bindable]
+			//public var myBGColor:int = 0xFFFFFF;
+			
+			//override public function set itemIndex(value:int):void {
+				//var s:String = label;
+				
+				//var selFs:File = curDirectory_.resolvePath (s);
+				//if (selFs.isDirectory) {
+				//}
+				//if ((value%2) == 0) {
+				//	myBGColor= 0xFFFFFF;
+				//}
+				//if ((value%2) == 1) {
+					//myBGColor= 0xCCFF66;
+				//	myBGColor= 0xFFCC00;
+				//}
+			//}
+		]]>
+	</fx:Script>
+
+
+</s:IconItemRenderer>

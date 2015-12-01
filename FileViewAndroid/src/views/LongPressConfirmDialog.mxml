@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SkinnablePopUpContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+						   xmlns:s="library://ns.adobe.com/flex/spark" 
+						   backgroundColor="0xAAAAAA" x="200" y="900" width="700" height="700">
+	<fx:Script>
+		<![CDATA[
+			
+			private var _message:String;
+			
+			[Bindable]
+			public function get message():String {
+				return _message;
+			}
+			
+			public function set message(value:String):void {
+				_message = value;
+			}
+			
+			private function onCancel():void {
+				super.close(false);				
+			}
+			
+			private function onCopy():void {
+				super.close(true, "C");				
+			}
+			
+			private function onMove():void {
+				super.close(true, "M");				
+			}
+			
+			private function onDelete():void {
+				super.close(true, "D");				
+			}
+			
+			private function onDuplicate():void {
+				super.close(true, "U");				
+			}
+			
+			private function onDirInfo():void {
+				super.close(true, "I");				
+			}
+			
+			//private function onClean():void {
+			//	super.close(true, "L");				
+			//}
+			
+			private function onThumbView():void {
+				super.close(true, "T");				
+			}
+			
+			private function onRange():void {
+				super.close(true, "R");				
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:Label text="Choose Action:" width="560" top="40" left="40"/>
+	<s:Button label="Copy" width="200" top="40" right="60" click="onCopy()"/>
+	<s:Button label="Move" width="200" top="130" right="60" click="onMove()"/>
+	<s:Button label="Duplicate" width="200" top="220" right="60" click="onDuplicate()"/>
+	<s:Button label="Delete" width="200" top="310" right="60" click="onDelete()"/>
+	<s:Button label="Dir Info" width="200" top="400" right="60" click="onDirInfo()"/>
+	<!-- <s:Button label="Clean" width="200" top="310" left="60" click="onClean()"/> -->
+	<s:Button label="View Images" width="200" top="400" left="60" click="onThumbView()"/>
+	<s:Label text="To make a range selection select the end of the range" width="650" top="530" left="20"/>
+	
+	<s:Button label="Cancel" width="200" bottom="40" left="60" click="onCancel()"/>
+	<s:Button label="Range" width="200" bottom="40" right="60" click="onRange()"/>
+	
+</s:SkinnablePopUpContainer>

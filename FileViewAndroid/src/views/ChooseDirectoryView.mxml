@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:View xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark"
+		xmlns:mx="library://ns.adobe.com/flex/mx"
+		creationComplete="OnViewComplete(event)"
+		title="Choose Directory">
+	<fx:Script>
+		<![CDATA[
+			import actionscript.ListColorRenderer;
+			include "../actionscript/ChooseDirectoryView.as";
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<s:List id="filelist"
+			itemRenderer="actionscript.ListColorRenderer"
+			height="1000" left="0" right="0" top="0">
+		<s:dataProvider>
+			<mx:ArrayCollection>
+				<fx:Object 
+					label="No entry available"
+				/>
+			</mx:ArrayCollection>
+		</s:dataProvider>
+	</s:List>
+	<s:Label id="st_path" x="20" y="1050" width="800" text="?"/>
+	<s:Button id="bt_up" x="20" y="1100" width="140" label="Up" click="onButtonUp(event)"/>
+	<s:Button id="bt_home" x="200" y="1100" width="140" label="Home" click="onButtonHome(event)"/>
+
+	<s:Button id="bt_dir1" x="360" y="1100" width="140" label="Dir1" click="onButtonDir1(event)"/>
+	<s:Button id="bt_dir2" x="520" y="1100" width="140" label="Dir2" click="onButtonDir2(event)"/>
+	<s:Button right="20" y="1100" width="220" label="Choose" click="onBtChoose(event)"/>
+	<s:Button right="280" y="1100" width="220" label="Cancel" click="onBtCancel(event)"/>
+</s:View>

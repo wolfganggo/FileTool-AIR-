@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:View xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark"
+		xmlns:mx="library://ns.adobe.com/flex/mx"
+		creationComplete="OnViewComplete(event)" removing="onViewRemoving(event)"
+		actionBarVisible="false"
+		backgroundColor="0"
+		title="">
+	<fx:Script>
+		<![CDATA[
+			include "../actionscript/ThumbnailView.as";
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<s:Label id="st_info" top="5" left="20" right="20" height="25" text="?" backgroundColor="0xBBBBBB"/>
+	<s:BitmapImage id="imgB" left="0" top="30" width="200" height="200" source="@Embed(source='res/back.png')" smooth="false"/>
+	<s:BitmapImage id="imgP" left="0" top="30" width="200" height="200" visible="false" source="@Embed(source='res/previous.png')" smooth="false"/>
+	<s:BitmapImage id="imgN" left="1000" top="1630" width="200" height="200" visible="false" source="@Embed(source='res/next.png')" smooth="false"/>
+
+	<s:BitmapImage id="img1" left="200" top="30" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img2" left="400" top="30" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img3" left="600" top="30" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img4" left="800" top="30" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img5" left="1000" top="30" width="200" height="200" smooth="true" scaleMode="zoom"/>
+
+	<s:BitmapImage id="img6" left="0" top="230" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img7" left="200" top="230" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img8" left="400" top="230" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img9" left="600" top="230" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img10" left="800" top="230" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img11" left="1000" top="230" width="200" height="200" smooth="true" scaleMode="zoom"/>
+
+	<s:BitmapImage id="img12" left="0" top="430" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img13" left="200" top="430" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img14" left="400" top="430" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img15" left="600" top="430" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img16" left="800" top="430" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img17" left="1000" top="430" width="200" height="200" smooth="true" scaleMode="zoom"/>
+
+	<s:BitmapImage id="img18" left="0" top="630" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img19" left="200" top="630" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img20" left="400" top="630" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img21" left="600" top="630" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img22" left="800" top="630" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img23" left="1000" top="630" width="200" height="200" smooth="true" scaleMode="zoom"/>
+
+	<s:BitmapImage id="img24" left="0" top="830" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img25" left="200" top="830" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img26" left="400" top="830" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img27" left="600" top="830" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img28" left="800" top="830" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img29" left="1000" top="830" width="200" height="200" smooth="true" scaleMode="zoom"/>
+
+	<s:BitmapImage id="img30" left="0" top="1030" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img31" left="200" top="1030" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img32" left="400" top="1030" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img33" left="600" top="1030" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img34" left="800" top="1030" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img35" left="1000" top="1030" width="200" height="200" smooth="true" scaleMode="zoom"/>
+
+	<s:BitmapImage id="img36" left="0" top="1230" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img37" left="200" top="1230" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img38" left="400" top="1230" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img39" left="600" top="1230" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img40" left="800" top="1230" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img41" left="1000" top="1230" width="200" height="200" smooth="true" scaleMode="zoom"/>
+
+	<s:BitmapImage id="img42" left="0" top="1430" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img43" left="200" top="1430" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img44" left="400" top="1430" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img45" left="600" top="1430" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img46" left="800" top="1430" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img47" left="1000" top="1430" width="200" height="200" smooth="true" scaleMode="zoom"/>
+
+	<s:BitmapImage id="img48" left="0" top="1630" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img49" left="200" top="1630" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img50" left="400" top="1630" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img51" left="600" top="1630" width="200" height="200" smooth="true" scaleMode="zoom"/>
+	<s:BitmapImage id="img52" left="800" top="1630" width="200" height="200" smooth="true" scaleMode="zoom"/>
+</s:View>

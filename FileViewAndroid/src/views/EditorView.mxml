@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:View xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark"
+		creationComplete="OnViewComplete(event)"
+		title="Text Editor">
+	<!-- <s:layout>
+		<s:BasicLayout/>
+		<s:VerticalLayout paddingTop="10"/>
+	</s:layout> -->
+	<fx:Script>
+		<![CDATA[
+			include "../actionscript/EditorView.as";
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<s:RadioButtonGroup id="rbGroup" itemClick="OnRadioBtnGroup(event);"/>
+	</fx:Declarations>
+	
+	<s:TextArea id="tx_edit"
+				changing="OnTextChanging(event)"
+				selectionChange="OnTextSelectionChange(event)"
+				left="0" right="0" top="0" height="1000" fontFamily="Courier"/>
+	<s:Button right="20" y="1050" width="200" label="Close" click="onButtonClose(event)"/>
+	<s:Button right="240" y="1050" width="200" label="Save" click="onButtonSave(event)"/>
+	<s:Label id="tx_index" x="20" y="1030" width="150" text="?"/>
+	<s:Label id="tx_line" x="190" y="1030" width="150" text="?"/>
+	<s:Label id="tx_column" x="360" y="1030" width="150" text="?"/>
+	<s:RadioButton groupName="rbGroup" 
+				   id="rb_ascii" 
+				   label="Ascii" 
+				   width="200" x="20" y="1070"/>
+	<s:RadioButton groupName="rbGroup" 
+				   id="rb_mac" 
+				   label="Mac" 
+				   width="200" x="240" y="1070"/>
+	<s:RadioButton groupName="rbGroup" 
+				   id="rb_win" 
+				   label="Windows" 
+				   width="200" x="460" y="1070"/>
+
+</s:View>

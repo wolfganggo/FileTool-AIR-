@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SkinnablePopUpContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+						   xmlns:s="library://ns.adobe.com/flex/spark" 
+						   backgroundColor="0xD8D8D8"
+						   creationComplete="onCreationComplete(event)"
+						   preinitialize="preinitializeHandler(event)"
+						   x="200" y="300" width="700" height="500">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			private var _message:String;
+			
+			[Bindable]
+			public function get message():String {
+				return _message;
+			}
+			
+			public function set message(value:String):void {
+				_message = value;
+			}
+			
+			protected function onCreationComplete(event:FlexEvent):void
+			{
+			}
+			
+			private function onClick(commit:Boolean):void {
+				super.close(commit);				
+			}
+			
+			protected function preinitializeHandler(event:FlexEvent):void
+			{
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:Label text="{message}" width="660" top="20" left="20"/>
+	
+	<s:Button id="bt_OK" label="OK" width="180" bottom="20" right="60" click="onClick(true)"/>
+	
+</s:SkinnablePopUpContainer>
