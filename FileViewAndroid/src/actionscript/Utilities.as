@@ -129,10 +129,7 @@ package actionscript
 /*
 \history
 
-WGo-2014-12-22: created
-WGo-2015-01-23: Wave file playing is possible
-WGo-2015-01-26: Wave file plays longer time
-WGo-2015-02-03: AIFF plays too
+WGo-2015-02-04: created
 
 */
 

@@ -27,9 +27,15 @@ private var curColNum_:int = 0;
 private var TextLengthInit_:int = 0; // initial length, where line end is always 1 char (CR+LF = 1 char)
 private var isMacEncoding_:Boolean = false;
 private var isWinEncoding_:Boolean = false;
+private var isUTF8Encoding_:Boolean = false;
 static private var isMacEncSetting_:Boolean = false;
 static private var isWinEncSetting_:Boolean = false;
+static private var isUTF8EncSetting_:Boolean = false;
 private var isModified_:Boolean = false;
+private var uft8Byte1_:uint = 0;
+private var uft8Byte2_:uint = 0;
+private var uft8Byte3_:uint = 0;
+private var uft16SuHigh_:uint = 0;
 
 //=======================================================
 
@@ -50,6 +56,7 @@ protected function OnViewComplete (event:FlexEvent):void
 	
 	isMacEncoding_ = isMacEncSetting_;
 	isWinEncoding_ = isWinEncSetting_;
+	isUTF8Encoding_ = isUTF8EncSetting_;
 
 	try {
 		content_ = new Array();
@@ -122,6 +129,13 @@ private function saveFile():void
 		}
 		else if (isWinEncoding_) {
 			stream.writeByte (getByteInWinAnsi (bt));
+		}
+		else if (isUTF8Encoding_) {
+			var bts:Array = getBytesInUTF8 (bt);
+			for (var iy:uint = 0; iy < bts.length; iy++) {
+				stream.writeByte (bts[iy]);
+				content_.push (bts[iy]);
+			}
 		}
 		else {
 			stream.writeByte (bt);
@@ -203,6 +217,14 @@ private function ShowTextContent():void
 			}
 			else if (isWinEncoding_) {
 				content += readWinAnsi (bt);
+			}
+			else if (isUTF8Encoding_) {
+				var u8:String = readUTF8 (bt);
+				if (u8.length == 0) {
+					lineLength--;
+					ix_txt--;
+				}
+				content += u8;
 			}
 			else {
 				content += ".";
@@ -638,6 +660,65 @@ private function readWinAnsi (bt:uint):String
 	return ".";
 }
 
+private function readUTF8 (bt:uint):String
+{
+	if (bt == 9 || bt == 10 || bt == 13) {
+		return "";
+	}
+	
+	if (bt > 0xc1 && bt < 0xf5) {
+		uft8Byte1_ = bt;
+		return "";
+	}
+	else if (bt > 0x7f && bt < 0xc0) {
+		var tmp:uint = 0;
+		if (uft8Byte3_ != 0) {
+			// 2 ^ 18 = 262144; 2 ^ 16 = 65536; 2 ^ 12 = 4096
+			//tmp = (uft8Byte1_ - 240) * 262144 + ((uft8Byte2_ - 128) / 16) * 65536 + 
+			//	(uft8Byte2_ % 16) * 4096 + (uft8Byte3_ - 128) * 64 + (bt - 128);
+			var u1:uint = (uft8Byte1_ - 240) * 262144;
+			//var u2:uint = (uft8Byte2_ / 16 - 8) * 65536; // wrong result !
+			var u21:uint = uft8Byte2_ / 16;
+			var u22:uint = u21 - 8;
+			var u2:uint = u22 * 65536;
+			var u3:uint = (uft8Byte2_ % 16) * 4096;
+			var u4:uint = (uft8Byte3_ - 128) * 64;
+			tmp = u1 + u2 + u3 + u4 + (bt - 128);
+			clearUTF8Mem();
+			var sur0:uint = tmp % 1024 + 0xDC00;
+			var sur1:uint = (tmp - 65536) / 1024 + 0xD800;
+			//return String.fromCharCode (tmp);
+			return String.fromCharCode (sur1, sur0);
+		}
+		else if (uft8Byte2_ != 0) {
+			if (uft8Byte1_ < 0xf0) {
+				tmp = (uft8Byte1_ - 224) * 4096 + (uft8Byte2_ - 128) * 64 + (bt - 128);
+				clearUTF8Mem();
+				return String.fromCharCode (tmp);
+			}
+			uft8Byte3_ = bt;
+			return "";
+		}
+		else if (uft8Byte1_ > 0) {
+			if (uft8Byte1_ < 0xe0) {
+				tmp = (uft8Byte1_ - 192) * 64 + (bt - 128);
+				clearUTF8Mem();
+				return String.fromCharCode (tmp);
+			}
+			uft8Byte2_ = bt;
+			return "";
+		}
+	}
+	return String.fromCharCode(0xfffd);
+}
+
+private function clearUTF8Mem():void
+{
+	uft8Byte1_ = 0;
+	uft8Byte2_ = 0;
+	uft8Byte3_ = 0;
+}
+
 protected function getByteInMacRoman (bt:uint):uint
 {
 	if ((bt > 31 && bt < 128) || bt == 9 || bt == 10 || bt == 13) {
@@ -1043,6 +1124,61 @@ protected function getByteInWinAnsi (bt:uint):uint
 	return 63;
 }
 
+protected function getBytesInUTF8 (bt:uint):Array
+{
+	var bytes:Array = new Array();
+	var tmp:uint = 0;
+	
+	if (bt < 128) {
+		bytes.push(bt);
+	}
+	else if (bt < 2048) {
+		tmp = 192 + bt / 64;
+		bytes.push(tmp);
+		var b0:uint = bt % 64;
+		tmp = 128 + b0;
+		bytes.push(tmp);
+	}
+	else if (bt < 65536) {
+		if (bt >= 0xD800 && bt <= 0xDB7F) {
+			uft16SuHigh_ = bt;
+		}
+		else if (bt >= 0xDC00 && bt <= 0xDFFF) {
+			tmp = bt - 0xDC00 + (uft16SuHigh_ - 0xD800) * 1024 + 65536;
+			var b2:uint = tmp / 262144; // 2 ^ 18
+			var tmp2:uint = 240 + b2;
+			bytes.push(tmp2);
+			b2 = tmp / 65536;
+			b2 = b2 % 4;
+			var b3:uint = tmp % 65536;
+			b3 = b3 / 4096;
+			tmp2 = 128 + b2 * 16 + b3;
+			bytes.push(tmp2);
+			b2 = tmp % 4096;
+			tmp2 = 128 + b2 / 64;
+			bytes.push(tmp2);
+			b2 = tmp % 64;
+			tmp2 = 128 + b2;
+			bytes.push(tmp2);
+		}
+		else { // simple UTF16
+			tmp = 224 + bt / 4096;
+			bytes.push(tmp);
+			//bytes.push(224 + bt / 4096);
+			var b1:uint = bt % 4096;
+			tmp = 128 + b1 / 64;
+			bytes.push(tmp);
+			//bytes.push(128 + b1 / 64);
+			b1 = bt % 64;
+			tmp = 128 + b1;
+			bytes.push(tmp);
+			//bytes.push(128 + bt % 64);
+		}
+	}
+	
+	return bytes;
+}
+
 
 protected function OnTextChanging (event:TextOperationEvent):void
 {
@@ -1070,8 +1206,10 @@ protected function OnRadioBtnGroup (event:ItemClickEvent):void
 {
 	isMacEncoding_ = rb_mac.selected;
 	isWinEncoding_ = rb_win.selected;
+	isUTF8Encoding_ = rb_utf8.selected;
 	isMacEncSetting_ = isMacEncoding_;
 	isWinEncSetting_ = isWinEncoding_;
+	isUTF8EncSetting_ = isUTF8Encoding_;
 	linePositions_ = new Array();
 	ShowTextContent();
 }
@@ -1094,6 +1232,7 @@ private function getLineAndColumnNumber (pos:int):void
 \history
 
 WGo-2015-02-05: Created
+WGo-2015-12-01: Read + write UTF8
 
 */
 

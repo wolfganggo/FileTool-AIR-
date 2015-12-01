@@ -31,6 +31,7 @@
 		<s:ViewMenuItem label="Set Dir1" click="onSetDir1(event);"/>
 		<s:ViewMenuItem label="Set Dir2" click="onSetDir2(event);"/>
 		<s:ViewMenuItem label="Clean Files" click="onClean(event);"/>
+		<s:ViewMenuItem label="Show Help" click="onShowHelp(event);"/>
 		<s:ViewMenuItem label="Show Debug Log" click="onShowLog(event);"/>
 	</s:viewMenuItems>
 	<s:actionContent>

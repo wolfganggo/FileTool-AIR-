@@ -30,7 +30,8 @@ import views.ThumbnailView;
 
 
 static public var curDirectory_:File = null;
-[Bindable] private var copyright:String = "© axaio software gmbh 2015";
+[Bindable] private var copyright:String = "axaio software gmbh 2015";
+private var versionStr:String = "FileViewAndroid Version 0.1.1"; // change also in FileViewAndroid-app.xml
 private var full_len:Number = 0;
 private var short_len:Number = 0;
 static private var retData_:Object = null;
@@ -1080,7 +1081,7 @@ private function cleanAction (dir:File):void
 			cleanAction (f);
 			continue;
 		}
-		if (f.name.length > 1 && f.name.substr (0, 2) == "._") {
+		if (f.name.length > 1 && (f.name.substr (0, 2) == "._" || f.name == ".DS_Store")) {
 			try {
 				f.moveToTrash();
 			}
@@ -1445,6 +1446,26 @@ private function ShowBinaryContent (fstr:FileStream, len:int):void
 	}
 	tx_view.text = content;
 	//text_len = content.length;
+}
+
+private function onShowHelp (event:MouseEvent):void
+{
+	var tx:String = "";
+	var content:String = versionStr;
+	
+	content += "\n\nThis is a tool for viewing the content of any file.\n";
+	content += "Text editing, copying, moving and deleting files works on the\n";
+	content += "internal memory and on USB sticks but not on inserted SD cards\n";
+	content += "due to the newly introduced limitation in the Android system.\n";
+	content += "Gestures do not work, so only click, double click and long click can be used.\n";
+	content += "Double click in the file list opens a text editor,\n";
+	content += "shows images or steps into a directory. Long click opens a context menu.\n";
+	content += "Double click in the middle of an image zooms in, simple click zooms out.\n";
+	content += "Long click in the middle shows file info,\n";
+	content += "click in the outer region pans (when zoomed) or steps forward and backward.\n";
+	content += "The menu item 'Clean Files' removes all '.DS_Store' and all files beginning with '._' recursively.\n";
+	
+	tx_view.text = content;
 }
 
 private function showExifInfo (fs:FileStream, len:int):void

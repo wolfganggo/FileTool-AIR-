@@ -28,15 +28,19 @@
 	<s:Label id="tx_column" x="360" y="1030" width="150" text="?"/>
 	<s:RadioButton groupName="rbGroup" 
 				   id="rb_ascii" 
-				   label="Ascii" 
-				   width="200" x="20" y="1070"/>
+				   label="ASCII" 
+				   width="150" x="20" y="1070"/>
 	<s:RadioButton groupName="rbGroup" 
 				   id="rb_mac" 
 				   label="Mac" 
-				   width="200" x="240" y="1070"/>
+				   width="150" x="190" y="1070"/>
 	<s:RadioButton groupName="rbGroup" 
 				   id="rb_win" 
-				   label="Windows" 
-				   width="200" x="460" y="1070"/>
+				   label="Win" 
+				   width="150" x="360" y="1070"/>
+	<s:RadioButton groupName="rbGroup" 
+				   id="rb_utf8" 
+				   label="UTF8" 
+				   width="150" x="530" y="1070"/>
 
 </s:View>
