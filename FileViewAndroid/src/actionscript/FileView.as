@@ -1463,7 +1463,7 @@ private function onShowHelp (event:MouseEvent):void
 	content += "Double click in the middle of an image zooms in, simple click zooms out.\n";
 	content += "Long click in the middle shows file info,\n";
 	content += "click in the outer region pans (when zoomed) or steps forward and backward.\n";
-	content += "The menu item 'Clean Files' removes all '.DS_Store' and all files beginning with '._' recursively.\n";
+	content += "The menu item 'Clean Files' removes '.DS_Store' and '._*' files recursive.\n";
 	
 	tx_view.text = content;
 }

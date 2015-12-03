@@ -18,7 +18,7 @@ import views.EditorView;
 
 
 static private var curDirectory_:File = null;
-[Bindable] private var copyright:String = "© axaio software gmbh 2015";
+[Bindable] private var copyright:String = "axaio software gmbh 2015";
 private var full_len:Number = 0;
 private var short_len:Number = 0;
 

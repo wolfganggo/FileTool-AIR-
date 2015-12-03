@@ -20,6 +20,8 @@
 					video.source = urlstr;
 					//video.autoPlay = false;
 					video.rotation = 90;
+					
+					// Video playing does not work. This is a bug in Flex, but Adobe hasn't fixed it
 					video.play();
 				}
 			}
