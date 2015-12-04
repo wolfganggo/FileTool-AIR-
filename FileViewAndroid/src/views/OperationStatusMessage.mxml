@@ -3,7 +3,7 @@
 						   xmlns:s="library://ns.adobe.com/flex/spark"
 						   creationComplete="onCreationComplete(event)"
 						   backgroundColor="0x898989"
-						   x="800" y="50" width="300" height="150">
+						   x="300" y="500" width="300" height="200">
 	<fx:Script>
 		<![CDATA[
 			import mx.events.FlexEvent;
@@ -21,14 +21,6 @@
 			
 			protected function onCreationComplete(event:FlexEvent):void
 			{
-				var tm:Timer = new Timer (3000, 1);
-				tm.addEventListener(TimerEvent.TIMER, onCreationTimer);
-				tm.start();
-			}
-			
-			private function onCreationTimer (event:TimerEvent):void
-			{
-				super.close(false);
 			}
 
 		]]>

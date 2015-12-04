@@ -228,6 +228,7 @@ private function zoom (into:Boolean):void
 	else {
 		zoomLevel_ = 0;
 	}
+	Utilities.logDebug("zoom(), scaling is: " + newScale.toString());
 	img.scaleX = newScale; 
 	img.scaleY = newScale;
 	totalScrollX_ = 0;
@@ -253,8 +254,6 @@ private function zoom (into:Boolean):void
 	
 	img.source = shownImage_;
 	shownImage_.bitmapData.scroll (totalScrollX_ * -1, totalScrollY_ * -1);
-	
-	//this.title = imageName_  + "   [" + ixStr + "] [zoom " + zoomLevel_.toString() + "]";
 }
 
 private function pan (direction:int):void // 1 = up (y smaller), 2 = right (x bigger), 3 = down (y bigger), 4 = left (x smaller)
@@ -373,7 +372,7 @@ private function pan (direction:int):void // 1 = up (y smaller), 2 = right (x bi
 protected function onMouseClick (event:MouseEvent):void
 {
 	lastevent_ = event;
-	Utilities.logDebug("PictureView:onMouseClick");
+	//Utilities.logDebug("PictureView:onMouseClick");
 	clickCount_++;
 	if (clickCount_ < 2) {
 		var tm:Timer = new Timer (500, 1);
@@ -449,7 +448,7 @@ private function onMouseClickTimer (event:TimerEvent):void
 		return;
 	}
 	clickCount_ = 0;
-	Utilities.logDebug("PictureView:onMouseClickTimer");
+	//Utilities.logDebug("PictureView:onMouseClickTimer");
 
 	var group:Group = lastevent_.target as Group;
 	if (group == null) {
@@ -466,7 +465,7 @@ private function onMouseClickTimer (event:TimerEvent):void
 
 protected function onMouseDown (event:MouseEvent):void
 {
-	Utilities.logDebug("PictureView:onMouseDown");
+	//Utilities.logDebug("PictureView:onMouseDown");
 	if (mouseDownTimerActive_) {
 		mouseDownTimerValid_ = false;
 	}
@@ -504,7 +503,7 @@ private function onMouseDownTimer (event:TimerEvent):void
 	}
 	mouseDownTimerValid_ = false;
 
-	Utilities.logDebug("PictureView:onMouseUp, longPress");
+	//Utilities.logDebug("PictureView:onMouseUp, longPress");
 	
 	if (curFile_ == null) {
 		return;

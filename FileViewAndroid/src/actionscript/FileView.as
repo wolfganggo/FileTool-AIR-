@@ -25,13 +25,14 @@ import actionscript.Utilities;
 
 import views.EditorView;
 import views.PictInfoDialog;
+import views.PictViewStatusMessage;
 import views.PictureView;
 import views.ThumbnailView;
 
 
 static public var curDirectory_:File = null;
 [Bindable] private var copyright:String = "axaio software gmbh 2015";
-private var versionStr:String = "FileViewAndroid Version 0.1.1"; // change also in FileViewAndroid-app.xml
+private var versionStr:String = "FileViewAndroid Version 0.1.2"; // change also in FileViewAndroid-app.xml
 private var full_len:Number = 0;
 private var short_len:Number = 0;
 static private var retData_:Object = null;
@@ -53,6 +54,7 @@ private var infoFileCount_:int = 0;
 private var infoDirCount_:int = 0;
 private var modelessTmpDlg_:LongPressConfirmDialog = null;
 private var ixinval:int = -1;
+private var statusDlg_:OperationStatusMessage = null;
 
 
 //=======================================================
@@ -147,6 +149,15 @@ protected function onViewActivate (event:ViewNavigatorEvent):void
 				}
 				var targetDir:File = new File (retDir);
 
+				//statusDlg_ = new OperationStatusMessage();
+				//if (retData_.kOperation == "move") {
+				//	statusDlg_.message = "Please wait while moving";
+				//}
+				//else {
+				//	statusDlg_.message = "Please wait while copying";
+				//}
+				//statusDlg_.open (this);
+				
 				for (var j:int = 0; j < names.length; j++) {
 					var curext:String = "";
 					//var selStr:String = retData_.kSrcSelection;
@@ -154,8 +165,14 @@ protected function onViewActivate (event:ViewNavigatorEvent):void
 					if (selStr == null || selStr.length == 0 || curDirectory_ == null) {
 						continue;
 					}
+						
 					var selFs:File = curDirectory_.resolvePath(selStr);
 					if (!selFs.exists) {
+						continue;
+					}
+					if (retDir.indexOf (selFs.nativePath) == 0) {
+						//Alert.show ("The file exists already.", "Rename");
+						Utilities.logDebug ("Error: destination path contains source path !");
 						continue;
 					}
 					try {
@@ -176,7 +193,9 @@ protected function onViewActivate (event:ViewNavigatorEvent):void
 						Utilities.logDebug (msg);
 					}
 				}
-				
+				//var cptmr:Timer = new Timer(500, 1);
+				//cptmr.addEventListener (TimerEvent.TIMER, onTimerCloseStatusDlg);
+				//cptmr.start();
 			}
 			return;
 		}
@@ -244,6 +263,13 @@ protected function OnApplicationClosing(event:ViewNavigatorEvent):void
 	}
 }
 
+private function onTimerCloseStatusDlg (event:TimerEvent):void
+{
+	statusDlg_.close();
+	statusDlg_ = null;
+}
+
+
 private function findTextItem (s:String):int
 {
 	for (var ix:int = 0; ix < filelist.dataProvider.length; ix++) {
@@ -306,7 +332,7 @@ private function getSelectedString ():String
 
 protected function onMouseDown (event:MouseEvent):void
 {
-	Utilities.logDebug("FileView:onMouseDown");
+	//Utilities.logDebug("FileView:onMouseDown");
 	if (mouseDownTimerActive_) {
 		mouseDownTimerValid_ = false;
 	}
@@ -847,7 +873,17 @@ private function doDuplicate():void
 			}
 			target = targetpar.resolvePath (nm + curext);
 		}
+		
+		//statusDlg_ = new OperationStatusMessage();
+		//statusDlg_.message = "Duplicating file(s)...";
+		//statusDlg_.open (this);
+		
 		selFs.copyTo (target, true);
+
+		//var cptmr:Timer = new Timer(500, 1);
+		//cptmr.addEventListener (TimerEvent.TIMER, onTimerCloseStatusDlg);
+		//cptmr.start();
+		
 		showFileList();
 	}
 	catch (error:Error) {
@@ -1015,8 +1051,7 @@ private function DeleteAction():void
 	if (filelist.selectedItems.length == 0) {
 		return;
 	}
-	//var selStr:String = filelist.selectedItem.label.toString();
-	
+
 	var sources:Array = new Array();
 	for (var ix:int = 0; ix < filelist.selectedItems.length; ix++) {
 		//sources.push (filelist.selectedItems[ix].label.toString());
