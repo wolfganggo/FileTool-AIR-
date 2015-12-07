@@ -1,19 +1,23 @@
 import flash.events.Event;
 import flash.events.MouseEvent;
+import flash.events.TimerEvent;
 import flash.events.TouchEvent;
 import flash.filesystem.File;
 import flash.filesystem.FileMode;
 import flash.filesystem.FileStream;
+import flash.utils.Timer;
 
 import mx.events.FlexEvent;
-
-import spark.events.IndexChangeEvent;
-import spark.events.TextOperationEvent;
 import mx.events.ItemClickEvent;
 
+import spark.events.IndexChangeEvent;
+import spark.events.PopUpEvent;
+import spark.events.TextOperationEvent;
 
 import flashx.textLayout.elements.TextFlow;
 import flashx.textLayout.operations.FlowOperation;
+
+import views.AlertDialog;
 
 
 private var file_:File = null;
@@ -31,6 +35,7 @@ private var isUTF8Encoding_:Boolean = false;
 static private var isMacEncSetting_:Boolean = false;
 static private var isWinEncSetting_:Boolean = false;
 static private var isUTF8EncSetting_:Boolean = false;
+private var initialized_:Boolean = false;
 private var isModified_:Boolean = false;
 private var uft8Byte1_:uint = 0;
 private var uft8Byte2_:uint = 0;
@@ -78,10 +83,22 @@ protected function OnViewComplete (event:FlexEvent):void
 		fstr.close();
 		
 		ShowTextContent();
+		
+		initialized_ = true;
 	}
 	catch (e:Error) {
 	}
+	
+	var tmr:Timer = new Timer(400);
+	tmr.addEventListener (TimerEvent.TIMER, onTextTimer);
+	tmr.start();
 }
+
+private function onTextTimer (event:TimerEvent):void
+{
+	processTextSelectionChange();
+}
+
 
 protected function onTouchTap (event:TouchEvent):void
 {
@@ -93,8 +110,25 @@ protected function onMouseClick (event:MouseEvent):void
 
 protected function onButtonClose(event:MouseEvent):void
 {
+	if (isModified_) {
+		var alert:AlertDialog = new AlertDialog();
+		alert.message = "Save modified File ?";
+		alert.addEventListener('close', closeHandler);
+		alert.open (this, true);
+	}
+	else {
+		navigator.popView();
+	}
+}
+
+protected function closeHandler(event:PopUpEvent):void
+{
+	if (event.commit) {
+		saveFile();
+	}
 	navigator.popView();
 }
+
 
 protected function onButtonSave(event:MouseEvent):void
 {
@@ -1184,7 +1218,7 @@ protected function OnTextChanging (event:TextOperationEvent):void
 {
 	var op:FlowOperation = event.operation;
 	var opstr:String = String (op);
-	if (opstr == "[object CopyOperation]") {
+	if (!initialized_ || opstr == "[object CopyOperation]") {
 		return;
 	}
 	isModified_ = true;
@@ -1194,6 +1228,11 @@ protected function OnTextChanging (event:TextOperationEvent):void
 }
 
 protected function OnTextSelectionChange (event:FlexEvent):void
+{
+	processTextSelectionChange(); // not handled in mobile
+}
+
+protected function processTextSelectionChange():void
 {
 	var anc:int = tx_edit.selectionAnchorPosition;
 	tx_index.text = "Ix: " + (anc + 1).toString();
@@ -1211,7 +1250,9 @@ protected function OnRadioBtnGroup (event:ItemClickEvent):void
 	isWinEncSetting_ = isWinEncoding_;
 	isUTF8EncSetting_ = isUTF8Encoding_;
 	linePositions_ = new Array();
+	initialized_ = false;
 	ShowTextContent();
+	initialized_ = true;
 }
 
 private function getLineAndColumnNumber (pos:int):void

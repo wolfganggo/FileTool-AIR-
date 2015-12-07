@@ -32,7 +32,7 @@ import views.ThumbnailView;
 
 static public var curDirectory_:File = null;
 [Bindable] private var copyright:String = "axaio software gmbh 2015";
-private var versionStr:String = "FileViewAndroid Version 0.1.2"; // change also in FileViewAndroid-app.xml
+private var versionStr:String = "FileViewAndroid Version 0.1.3"; // change also in FileViewAndroid-app.xml
 private var full_len:Number = 0;
 private var short_len:Number = 0;
 static private var retData_:Object = null;
@@ -136,66 +136,31 @@ protected function onViewActivate (event:ViewNavigatorEvent):void
 
 	if (retData_ != null && retData_.kOperation != null && retData_.kDirectory != null) {
 		if (retData_.kOperation == "copy" || retData_.kOperation == "move") {
-			retData_.kOperation = "none";
 			//var retDir:String = retObj.object as String;
 			var retDir:String = retData_.kDirectory;
 			if (retDir.length < 1) {
+				retData_.kOperation = "none";
 				return;
 			}
 			if (retDir.length > 0) {
 				var names:Array = retData_.kSelectedNames as Array;
 				if (names == null) {
+					retData_.kOperation = "none";
 					return;
 				}
-				var targetDir:File = new File (retDir);
 
-				//statusDlg_ = new OperationStatusMessage();
-				//if (retData_.kOperation == "move") {
-				//	statusDlg_.message = "Please wait while moving";
-				//}
-				//else {
-				//	statusDlg_.message = "Please wait while copying";
-				//}
-				//statusDlg_.open (this);
-				
-				for (var j:int = 0; j < names.length; j++) {
-					var curext:String = "";
-					//var selStr:String = retData_.kSrcSelection;
-					var selStr:String = names[j];
-					if (selStr == null || selStr.length == 0 || curDirectory_ == null) {
-						continue;
-					}
-						
-					var selFs:File = curDirectory_.resolvePath(selStr);
-					if (!selFs.exists) {
-						continue;
-					}
-					if (retDir.indexOf (selFs.nativePath) == 0) {
-						//Alert.show ("The file exists already.", "Rename");
-						Utilities.logDebug ("Error: destination path contains source path !");
-						continue;
-					}
-					try {
-						if (!targetDir.exists || targetDir.nativePath == curDirectory_.nativePath) {
-							continue;
-						}
-						var target:File = targetDir.resolvePath (selStr);
-						if (retData_.kOperation == "move") {
-							selFs.moveTo (target, true);
-						}
-						else {
-							selFs.copyTo (target, true);
-						}
-					}
-					catch (error:Error) {
-						var msg:String = error.message.toString();
-						Utilities.logDebug ("onViewActivate, 'move' error");
-						Utilities.logDebug (msg);
-					}
+				statusDlg_ = new OperationStatusMessage();
+				if (retData_.kOperation == "move") {
+					statusDlg_.message = "Please wait while moving";
 				}
-				//var cptmr:Timer = new Timer(500, 1);
-				//cptmr.addEventListener (TimerEvent.TIMER, onTimerCloseStatusDlg);
-				//cptmr.start();
+				else {
+					statusDlg_.message = "Please wait while copying";
+				}
+				statusDlg_.open (this);
+				
+				var cptmr:Timer = new Timer(200, 1);
+				cptmr.addEventListener (TimerEvent.TIMER, onTimerCopyMoveOperation);
+				cptmr.start();
 			}
 			return;
 		}
@@ -263,10 +228,62 @@ protected function OnApplicationClosing(event:ViewNavigatorEvent):void
 	}
 }
 
+private function onTimerCopyMoveOperation (event:TimerEvent):void
+{
+	//var retDir:String = retObj.object as String;
+	var retDir:String = retData_.kDirectory;
+	if (retDir.length > 0) {
+		var names:Array = retData_.kSelectedNames as Array;
+		var targetDir:File = new File (retDir);
+		
+		for (var j:int = 0; j < names.length; j++) {
+			var curext:String = "";
+			//var selStr:String = retData_.kSrcSelection;
+			var selStr:String = names[j];
+			if (selStr == null || selStr.length == 0 || curDirectory_ == null) {
+				continue;
+			}
+			
+			var selFs:File = curDirectory_.resolvePath(selStr);
+			if (!selFs.exists) {
+				continue;
+			}
+			if (retDir.indexOf (selFs.nativePath) == 0) {
+				//Alert.show ("The file exists already.", "Rename");
+				Utilities.logDebug ("Error: destination path contains source path !");
+				continue;
+			}
+			try {
+				if (!targetDir.exists || targetDir.nativePath == curDirectory_.nativePath) {
+					continue;
+				}
+				var target:File = targetDir.resolvePath (selStr);
+				if (retData_.kOperation == "move") {
+					selFs.moveTo (target, true);
+				}
+				else {
+					selFs.copyTo (target, true);
+				}
+			}
+			catch (error:Error) {
+				retData_.kOperation = "none";
+				var msg:String = error.message.toString();
+				Utilities.logDebug ("onViewActivate, 'move' error");
+				Utilities.logDebug (msg);
+			}
+		}
+		retData_.kOperation = "none";
+		var closetmr:Timer = new Timer (300, 1);
+		closetmr.addEventListener (TimerEvent.TIMER, onTimerCloseStatusDlg);
+		closetmr.start();
+	}
+}
+
 private function onTimerCloseStatusDlg (event:TimerEvent):void
 {
 	statusDlg_.close();
 	statusDlg_ = null;
+	showFileList();
 }
 
 
@@ -847,51 +864,62 @@ private function doDuplicate():void
 	if (filelist.allowMultipleSelection) {
 		return;
 	}
-	var curext:String = "";
 	var selStr:String = getSelectedString();
 	if (selStr == null || selStr.length == 0 || curDirectory_ == null) {
 		return;
 	}
+		
+	statusDlg_ = new OperationStatusMessage();
+	statusDlg_.message = "Duplicating file(s)...";
+	statusDlg_.open (this);
+	
+	var dptmr:Timer = new Timer(200, 1);
+	dptmr.addEventListener (TimerEvent.TIMER, onTimerDuplicate);
+	dptmr.start();
+}
+
+private function onTimerDuplicate (event:TimerEvent):void
+{
+	var curext:String = "";
+	var selStr:String = getSelectedString();
 	var selFs:File = curDirectory_.resolvePath(selStr);
 	if (selFs.extension != null) {
 		curext = selFs.extension;
 	}
-
-	try {
-		var par:String = selFs.parent.nativePath;
-		if (curext.length > 0) {
-			curext = "." + curext;
-		}
-		var nm:String = selFs.name.substr(0, selFs.name.length - curext.length);
-		nm += "_1";
-		var targetpar:File = new File (par);
-		var target:File = targetpar.resolvePath (nm + curext);
-		while(target.exists) {
-			nm += "1";
-			if (nm.length > 200) {
-				return;
-			}
-			target = targetpar.resolvePath (nm + curext);
-		}
-		
-		//statusDlg_ = new OperationStatusMessage();
-		//statusDlg_.message = "Duplicating file(s)...";
-		//statusDlg_.open (this);
-		
-		selFs.copyTo (target, true);
-
-		//var cptmr:Timer = new Timer(500, 1);
-		//cptmr.addEventListener (TimerEvent.TIMER, onTimerCloseStatusDlg);
-		//cptmr.start();
-		
-		showFileList();
-	}
-	catch (error:Error) {
-		var msg:String = error.message.toString();
-		Utilities.logDebug ("doDuplicate error");
-		Utilities.logDebug (msg);
-	}
 	
+	do {
+		try {
+			var par:String = selFs.parent.nativePath;
+			if (curext.length > 0) {
+				curext = "." + curext;
+			}
+			var nm:String = selFs.name.substr(0, selFs.name.length - curext.length);
+			nm += "_1";
+			var targetpar:File = new File (par);
+			var target:File = targetpar.resolvePath (nm + curext);
+			while(target.exists) {
+				nm += "1";
+				if (nm.length > 200) {
+					Utilities.logDebug ("doDuplicate: name is too long");
+					break;
+				}
+				target = targetpar.resolvePath (nm + curext);
+			}
+			
+			selFs.copyTo (target, true);
+			//showFileList();
+		}
+		catch (error:Error) {
+			var msg:String = error.message.toString();
+			Utilities.logDebug ("doDuplicate error");
+			Utilities.logDebug (msg);
+		}
+		
+	} while(false);
+
+	var closetmr:Timer = new Timer(300, 1);
+	closetmr.addEventListener (TimerEvent.TIMER, onTimerCloseStatusDlg);
+	closetmr.start();
 }
 
 private function onCopyFile (event:MouseEvent):void
@@ -1913,6 +1941,7 @@ protected function getSizeStr (len:Number):String
 \history
 
 WGo-2015-02-04: Created
+WGo-2015-12-07: Status message shown for copy, move, duplicate
 
 */
 

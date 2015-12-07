@@ -76,7 +76,7 @@
 	<s:Label id="tx_InfoFocal" x="760" y="860" width="360" text="?"/>
 	<s:Label id="tx_InfoFlash" x="760" y="900" width="360" text="?"/>
 	
-	<s:TextArea id="tx_view" editable="false" bottom="0" left="0" right="0" height="800" fontSize="18" text="© axaio software gmbh 2015"/>
+	<s:TextArea id="tx_view" editable="false" bottom="0" left="0" right="0" height="800" fontSize="18" text="axaio software gmbh 2015"/>
 	<s:Image id="img" bottom="0" left="0" right="0" height="800" smooth="true"/>
 	<s:Image id="img_vt" bottom="0" left="200" height="800" width="800" smooth="true"/>
 </s:View>

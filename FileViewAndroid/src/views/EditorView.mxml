@@ -18,9 +18,10 @@
 	</fx:Declarations>
 	
 	<s:TextArea id="tx_edit"
-				changing="OnTextChanging(event)"
+				change="OnTextChanging(event)"
 				selectionChange="OnTextSelectionChange(event)"
 				left="0" right="0" top="0" height="1000" fontFamily="Courier"/>
+	<!-- changing="OnTextChanging(event)" not for mobile -->	
 	<s:Button right="20" y="1050" width="200" label="Close" click="onButtonClose(event)"/>
 	<s:Button right="240" y="1050" width="200" label="Save" click="onButtonSave(event)"/>
 	<s:Label id="tx_index" x="20" y="1030" width="150" text="?"/>

@@ -3,7 +3,7 @@
 						   xmlns:s="library://ns.adobe.com/flex/spark"
 						   creationComplete="onCreationComplete(event)"
 						   backgroundColor="0x898989"
-						   x="300" y="500" width="300" height="200">
+						   x="300" y="500" width="600" height="400">
 	<fx:Script>
 		<![CDATA[
 			import mx.events.FlexEvent;
@@ -26,6 +26,6 @@
 		]]>
 	</fx:Script>
 	
-	<s:Label text="{message}" width="260" top="20" left="20"/>
+	<s:Label text="{message}" width="540" top="100" left="30" fontSize="36" fontWeight="bold"/>
 	
 </s:SkinnablePopUpContainer>
