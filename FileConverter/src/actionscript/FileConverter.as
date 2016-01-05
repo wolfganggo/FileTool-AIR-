@@ -88,6 +88,10 @@ private var askForMoveDialog_:Boolean = false;
 private var fileToCopyMove_:Object = null; // kSource, kDestination
 private var lastTargetFolder_:String = "";
 
+private var wave_in1_:String = "";
+private var wave_in2_:String = "";
+private var wave_out_:String = "";
+
 //=======================================================
 
 private function OnAppComplete():void
@@ -154,7 +158,7 @@ private function OnAppComplete():void
 	Utilities.WriteDebugLogMessage(dir);
 	if (dir.length > 0) {
 		var dirFs:File = new File (dir);
-		if (!dirFs.exists) {
+		if (!dirFs.exists || !dirFs.isDirectory) {
 			dirFs = File.desktopDirectory;
 		}
 		fs_importFiles.directory = dirFs;
@@ -595,6 +599,9 @@ private function showAudioPlayer (path:String, isWave:Boolean, isAIFF:Boolean):v
 			numsamples = Utilities.readWaveFile (path);
 		}
 		//trace("wave samples read: " +  numsamples);
+		if (numsamples < 1000) {
+			return;
+		}
 		sound_.loadPCMFromByteArray (Utilities.wavechunk_1, numsamples);
 		//var total:int = sound_.bytesTotal; // bytes for 1 stereo channel (samples * 4)
 		waveLength_ = numsamples * 10 / 441; // in ms
@@ -1062,9 +1069,10 @@ private function showExifInfo (fs:FileStream, len:int):Boolean
 	var isPortrait:Boolean = false;
 	var record:Array = new Array();
 	var idstr:String = "";
+	var prestr:String = "";
 	var bt14:uint = 0;
 	var bt_1:uint = 0; 
-	var bigEnd:Boolean = false;
+	var littleEnd:Boolean = false;
 	var firstByte:Boolean = true;
 	const make_id:uint = 0x010f;
 	const model_id:uint = 0x0110;
@@ -1090,6 +1098,20 @@ private function showExifInfo (fs:FileStream, len:int):Boolean
 	if (len > 10000) {
 		len = 10000;
 	}
+	for (var iy:uint = 0; iy < 64; iy++) {
+		var b1:uint = 0;
+		b1 = fs.readUnsignedByte();
+		if (b1 < 32 || b1 > 126) {
+			b1 = 63;
+		}
+		prestr += String.fromCharCode (b1);
+	}
+	var found_ix:int = prestr.indexOf("Exif");
+	if (found_ix < 6) {
+		return isPortrait;
+	}
+	fs.position = found_ix - 6;
+	
 	for (var ix:uint = 0; ix < len; ix++) {
 		var bt:uint = 0;
 		bt = fs.readUnsignedByte();
@@ -1101,10 +1123,10 @@ private function showExifInfo (fs:FileStream, len:int):Boolean
 		}
 		if (ix == 15) {
 			if (bt14 == 0 && bt > 0) {
-				bigEnd = false;
+				littleEnd = false;
 			}
 			else if (bt14 > 0 && bt == 0) {
-				bigEnd = true;
+				littleEnd = true;
 			}
 			else {
 				return isPortrait;
@@ -1119,7 +1141,7 @@ private function showExifInfo (fs:FileStream, len:int):Boolean
 				firstByte = false;
 			}
 			else {
-				if (bigEnd) {
+				if (littleEnd) {
 					record.push (bt * 256 + bt_1);
 				}
 				else {
@@ -1136,26 +1158,26 @@ private function showExifInfo (fs:FileStream, len:int):Boolean
 	entry.kStr4 = "";
 	entry.kInt = 0;
 	tx_InfoMake.text = "Make: ";
-	if (getExifValueFromString (record, make_id, entry, bigEnd)) {
+	if (getExifValueFromString (record, make_id, entry, littleEnd)) {
 		tx_InfoMake.text += entry.kStr;
 	}
 	tx_InfoModel.text = "Model: ";
-	if (getExifValueFromString (record, model_id, entry, bigEnd)) {
+	if (getExifValueFromString (record, model_id, entry, littleEnd)) {
 		tx_InfoModel.text += entry.kStr;
 	}
-	//if (getExifValueFromString (record, lensmake_id, entry, bigEnd)) {
+	//if (getExifValueFromString (record, lensmake_id, entry, littleEnd)) {
 	//	tx_InfoLensMake.text = "Lens Make: " + entry.kStr;
 	//}
 	tx_InfoLensMake.text = "Lens Model: ";
-	if (getExifValueFromString (record, lensmodel_id, entry, bigEnd)) {
+	if (getExifValueFromString (record, lensmodel_id, entry, littleEnd)) {
 		tx_InfoLensModel.text = entry.kStr;
 	}
 	tx_InfoDate.text = "Date: ";
-	if (getExifValueFromString (record, date_id, entry, bigEnd)) {
+	if (getExifValueFromString (record, date_id, entry, littleEnd)) {
 		tx_InfoDate.text += entry.kStr;
 	}
 	tx_InfoOrient.text = "Orientation: ";
-	if (getExifValueFromShort (record, orient_id, entry, bigEnd)) {
+	if (getExifValueFromShort (record, orient_id, entry, littleEnd)) {
 		if (entry.kInt > 0 && entry.kInt < 5) {
 			tx_InfoOrient.text += " landscape";
 		}
@@ -1165,29 +1187,29 @@ private function showExifInfo (fs:FileStream, len:int):Boolean
 		}
 	}
 	tx_InfoSens.text = "Sensitivity: ";
-	if (getExifValueFromLong (record, iso_id, entry, bigEnd)) {
+	if (getExifValueFromLong (record, iso_id, entry, littleEnd)) {
 		tx_InfoSens.text += entry.kStr;
 	}
-	else if (getExifValueFromShort (record, sens_id, entry, bigEnd)) {
+	else if (getExifValueFromShort (record, sens_id, entry, littleEnd)) {
 		tx_InfoSens.text += entry.kStr;
 	}
 	tx_InfoExpo.text = "Exposure time: ";
-	if (getExifValueFromRational (record, exposure_id, entry, bigEnd)) {
+	if (getExifValueFromRational (record, exposure_id, entry, littleEnd)) {
 		tx_InfoExpo.text += entry.kStr;
 	}
 	tx_InfoFNum.text = "F Number: ";
-	if (getExifValueFromRational (record, fnum_id, entry, bigEnd)) {
+	if (getExifValueFromRational (record, fnum_id, entry, littleEnd)) {
 		tx_InfoFNum.text += entry.kStr3;
 	}
 	tx_InfoFocal.text = "Focal length: ";
-	if (getExifValueFromRational (record, focal_id, entry, bigEnd)) {
+	if (getExifValueFromRational (record, focal_id, entry, littleEnd)) {
 		tx_InfoFocal.text += entry.kStr2;
 	}
-	if (getExifValueFromShort (record, focal35_id, entry, bigEnd)) {
+	if (getExifValueFromShort (record, focal35_id, entry, littleEnd)) {
 		tx_InfoFocal.text += " (equ " + entry.kStr + ")";
 	}
 	tx_InfoProgram.text = "Program: ";
-	if (getExifValueFromShort (record, program_id, entry, bigEnd)) {
+	if (getExifValueFromShort (record, program_id, entry, littleEnd)) {
 		if (entry.kInt == 0) {
 			tx_InfoProgram.text += "undefined";
 		}
@@ -1220,7 +1242,7 @@ private function showExifInfo (fs:FileStream, len:int):Boolean
 		}
 	}
 	tx_InfoFlash.text = "Flash used: ";
-	if (getExifValueFromShort (record, flash_id, entry, bigEnd)) {
+	if (getExifValueFromShort (record, flash_id, entry, littleEnd)) {
 		if (entry.kInt % 2 > 0) { // bit 0 is set
 			tx_InfoFlash.text += "Yes";
 		}
@@ -1229,7 +1251,7 @@ private function showExifInfo (fs:FileStream, len:int):Boolean
 		}
 	}
 	tx_InfoMetering.text = "Metering mode: ";
-	if (getExifValueFromShort (record, metering_id, entry, bigEnd)) {
+	if (getExifValueFromShort (record, metering_id, entry, littleEnd)) {
 		if (entry.kInt == 1) {
 			tx_InfoMetering.text += "average";
 		}
@@ -1253,7 +1275,7 @@ private function showExifInfo (fs:FileStream, len:int):Boolean
 		}
 	}
 	tx_InfoWhitebal.text = "White balance: ";
-	if (getExifValueFromShort (record, whitebal_id, entry, bigEnd)) {
+	if (getExifValueFromShort (record, whitebal_id, entry, littleEnd)) {
 		if (entry.kInt == 0) {
 			tx_InfoWhitebal.text += "auto";
 		}
@@ -1262,11 +1284,11 @@ private function showExifInfo (fs:FileStream, len:int):Boolean
 		}
 	}
 	tx_InfoBias.text = "Exposure bias: ";
-	if (getExifValueFromRational (record, bias_id, entry, bigEnd)) {
+	if (getExifValueFromRational (record, bias_id, entry, littleEnd)) {
 		tx_InfoBias.text += entry.kStr4;
 	}
 	tx_InfoCSpace.text = "Color space: ";
-	if (getExifValueFromShort (record, cspace_id, entry, bigEnd)) {
+	if (getExifValueFromShort (record, cspace_id, entry, littleEnd)) {
 		if (entry.kInt == 1) {
 			tx_InfoCSpace.text += "sRGB";
 		}
@@ -1275,7 +1297,7 @@ private function showExifInfo (fs:FileStream, len:int):Boolean
 		}
 	}
 	tx_InfoExpomode.text = "Exposure mode: ";
-	if (getExifValueFromShort (record, expomode_id, entry, bigEnd)) {
+	if (getExifValueFromShort (record, expomode_id, entry, littleEnd)) {
 		if (entry.kInt == 0) {
 			tx_InfoExpomode.text += "auto exp";
 		}
@@ -1287,7 +1309,7 @@ private function showExifInfo (fs:FileStream, len:int):Boolean
 		}
 	}
 	tx_InfoLightSource.text = "Light source: ";
-	if (getExifValueFromShort (record, lightsource_id, entry, bigEnd)) {
+	if (getExifValueFromShort (record, lightsource_id, entry, littleEnd)) {
 		if (entry.kInt == 0) {
 			tx_InfoLightSource.text += "auto";
 		}
@@ -1322,7 +1344,7 @@ private function showExifInfo (fs:FileStream, len:int):Boolean
 	return isPortrait;
 }
 
-private function getExifValueFromString (arr:Array, id:uint, value:Object, bigEnd:Boolean):Boolean
+private function getExifValueFromString (arr:Array, id:uint, value:Object, littleEnd:Boolean):Boolean
 {
 	var pos:int = 0;
 	value.kStr = "";
@@ -1331,7 +1353,7 @@ private function getExifValueFromString (arr:Array, id:uint, value:Object, bigEn
 		if (pos > 0) {
 			if (arr[pos + 1] == 2) {
 				var len:uint = 0;
-				if (bigEnd) {
+				if (littleEnd) {
 					len = arr[pos + 2] + arr[pos + 3] * 65536;
 				}
 				else {
@@ -1340,14 +1362,14 @@ private function getExifValueFromString (arr:Array, id:uint, value:Object, bigEn
 				if (len < 100) {
 					var offs:uint = 0;
 					var arlen:int = arr.length;
-					if (bigEnd) {
+					if (littleEnd) {
 						offs = arr[pos + 4] + arr[pos + 5] * 65536;
 					}
 					else {
 						offs = arr[pos + 4] * 65536 + arr[pos + 5];
 					}
 					for (var ix:int = offs / 2; ix < arlen; ix++) {
-						if (bigEnd) {
+						if (littleEnd) {
 							value.kStr += String.fromCharCode (arr[ix] % 256); // second byte at first
 							value.kStr += String.fromCharCode (arr[ix] / 256);
 						}
@@ -1368,7 +1390,7 @@ private function getExifValueFromString (arr:Array, id:uint, value:Object, bigEn
 	return false;
 }
 
-private function getExifValueFromShort (arr:Array, id:uint, value:Object, bigEnd:Boolean):Boolean
+private function getExifValueFromShort (arr:Array, id:uint, value:Object, littleEnd:Boolean):Boolean
 {
 	var pos:int = 0;
 	value.kStr = "";
@@ -1378,7 +1400,7 @@ private function getExifValueFromShort (arr:Array, id:uint, value:Object, bigEnd
 		if (pos > 0) {
 			if (arr[pos + 1] == 3) {
 				var len:uint = 0;
-				if (bigEnd) {
+				if (littleEnd) {
 					len = arr[pos + 2] + arr[pos + 3] * 65536;
 				}
 				else {
@@ -1395,7 +1417,7 @@ private function getExifValueFromShort (arr:Array, id:uint, value:Object, bigEnd
 	return false;
 }
 
-private function getExifValueFromLong (arr:Array, id:uint, value:Object, bigEnd:Boolean):Boolean
+private function getExifValueFromLong (arr:Array, id:uint, value:Object, littleEnd:Boolean):Boolean
 {
 	var pos:int = 0;
 	value.kStr = "";
@@ -1405,14 +1427,14 @@ private function getExifValueFromLong (arr:Array, id:uint, value:Object, bigEnd:
 		if (pos > 0) {
 			if (arr[pos + 1] == 4 || arr[pos + 1] == 9) {
 				var len:uint = 0;
-				if (bigEnd) {
+				if (littleEnd) {
 					len = arr[pos + 2] + arr[pos + 3] * 65536;
 				}
 				else {
 					len = arr[pos + 2] * 65536 + arr[pos + 3];
 				}
 				if (len == 1) {
-					if (bigEnd) {
+					if (littleEnd) {
 						value.kInt = arr[pos + 4] + arr[pos + 5] * 65536;
 						value.kStr = value.kInt.toString();
 					}
@@ -1428,7 +1450,7 @@ private function getExifValueFromLong (arr:Array, id:uint, value:Object, bigEnd:
 	return false;
 }
 
-private function getExifValueFromRational (arr:Array, id:uint, value:Object, bigEnd:Boolean):Boolean
+private function getExifValueFromRational (arr:Array, id:uint, value:Object, littleEnd:Boolean):Boolean
 {
 	var pos:int = 0;
 	value.kStr = "";
@@ -1447,7 +1469,7 @@ private function getExifValueFromRational (arr:Array, id:uint, value:Object, big
 			}
 			if (signed >= 0) {
 				var len:uint = 0;
-				if (bigEnd) {
+				if (littleEnd) {
 					len = arr[pos + 2] + arr[pos + 3] * 65536;
 				}
 				else {
@@ -1456,7 +1478,7 @@ private function getExifValueFromRational (arr:Array, id:uint, value:Object, big
 				if (len == 1) {
 					var offs:uint = 0;
 					var arlen:int = arr.length;
-					if (bigEnd) {
+					if (littleEnd) {
 						offs = arr[pos + 4] + arr[pos + 5] * 65536;
 					}
 					else {
@@ -1470,7 +1492,7 @@ private function getExifValueFromRational (arr:Array, id:uint, value:Object, big
 					if (signed) {
 						var ras1:int = 0; 
 						var ras2:int = 0; 
-						if (bigEnd) {
+						if (littleEnd) {
 							ras1 = int (arr[ix] + arr[ix + 1] * 65536);
 							ras2 = int (arr[ix + 2] + arr[ix + 3] * 65536);
 						}
@@ -1502,7 +1524,7 @@ private function getExifValueFromRational (arr:Array, id:uint, value:Object, big
 					else {
 						var ra1:uint = 0; 
 						var ra2:uint = 0; 
-						if (bigEnd) {
+						if (littleEnd) {
 							ra1 = arr[ix] + arr[ix + 1] * 65536;
 							ra2 = arr[ix + 2] + arr[ix + 3] * 65536;
 						}
@@ -2286,6 +2308,55 @@ public function EditWaveFile (begin:uint, len:uint, norm:Boolean, swap:Boolean, 
 	}
 }
 
+public function ConcatWaveFile():void
+{
+	var path:String = fs_importFiles.selectedPath;
+	if (path != null && path.length > 0) {
+		var dir:String = fs_importFiles.directory.nativePath;
+		var dirNew:File = new File (dir); 
+		dirNew.browseForOpen ("Select wave file to append");
+		dirNew.addEventListener(Event.SELECT, fileSelectedConcat);
+	}
+}
+
+private function fileSelectedConcat(event:Event):void 
+{
+	var path:String = fs_importFiles.selectedPath;
+	if (path.length < 1) {
+		return;
+	}
+	wave_in1_ = path;
+	var wave1:File = new File (path);
+	var targetdir:File = wave1.parent;
+	var targetname:String = wave1.name;
+	var targetext:String = wave1.extension;
+	
+	var nm:String = targetname.substr (0, targetname.length - targetext.length - 1);
+	nm += "_cat";
+	var target:File = targetdir.resolvePath (nm + "." + targetext);
+	var wave2:File = event.target as File;
+	wave_in2_ = wave2.nativePath;
+	wave_out_ = target.nativePath;
+	if (wave_in2_ == wave_in1_ || wave_in2_ == wave_out_) {
+		Alert.show ("Please choose another file.", "File Name Collision");
+		return;
+	}
+	this.enabled = false;
+
+	var tm:Timer = new Timer(100, 1);
+	tm.addEventListener(TimerEvent.TIMER, OnAfterConcatTimer);
+	tm.start();
+}
+
+private function OnAfterConcatTimer(event:TimerEvent):void
+{
+	Utilities.concatWaveFiles (wave_in1_, wave_in2_, wave_out_);
+	this.enabled = true;
+	fs_importFiles.refresh();
+	//OnFileChoose();
+}
+
+
 private function CopyAction (srcFs:File, newFs:File, overwrite:Boolean):Boolean
 {
 	if (srcFs.exists) {
@@ -2710,6 +2781,8 @@ WGo-2015-03-17: ShowBinaryContent() char 0x7f must be shown as '.'
 WGo-2015-04-10: Copy + Move
 WGo-2015-04-13: Copy + Move tested
 WGo-2015-11-03: RemoveDSStoreFiles on key Z
+WGo-2016-01-04: Concatenate wave files
+WGo-2016-01-05: Find Exif data also in JFIF file
 
 */
 

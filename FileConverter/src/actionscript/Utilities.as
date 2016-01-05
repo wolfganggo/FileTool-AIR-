@@ -1203,7 +1203,264 @@ package actionscript
 			return maxval; // in 32 bit format
 		}
 			
+		static public function concatWaveFiles (path1:String, path2:String, target:String):uint
+		{
+			var written:uint = 0;
+			try {
+				var file1:File = new File (path1);
+				var fsWave1:FileStream = new FileStream();
+				fsWave1.open (file1, FileMode.READ);
+				var len1:Number = file1.size;
+				if (len1 > 0xfffffff0) { // fit to uint
+					waveFileSize_ = 0;
+					return 0;
+				}
+				var totalBytes1:uint = 0;
+				var record:Array = new Array();
+				var curID:String = "";
+				var curStart:uint = 0;
+				var curLen:uint = 0;
+				var hdrlen:Number = len1;
+				if (hdrlen > 2000) { // header length
+					hdrlen = 2000;
+				}
+				for (var i:uint = 0; i < hdrlen; i++) {
+					var b:uint = 0;
+					b = fsWave1.readUnsignedByte();
+					record.push (b);
+				}
+				fsWave1.position = 0;
+				
+				var ixHdr:int = 0;
+				for (; ixHdr < record.length; ixHdr++) {
+					if (record[ixHdr] > 0) {
+						curID += String.fromCharCode (record[ixHdr]);
+					}
+					if (ixHdr == 3) {
+						if (curID != "RIFF") {
+							return 0;
+						}
+					}
+					if (ixHdr == 7) {
+						curID = "";
+					}
+					if (ixHdr == 11) {
+						if (curID == "WAVE") {
+							break;
+						}
+						else {
+							return 0;
+						}
+					}
+				}
+				//totalBytes1 = record[4] + record[5] * 256 + record[6] * 65536 + record[7] * 16777216;
+				
+				ixHdr++;
+				curStart = ixHdr;
+				curID = "";
+				for (; ixHdr < record.length; ixHdr++) {
+					curID += String.fromCharCode (record[ixHdr]);
+					if (ixHdr - curStart == 3) {
+						curLen = record[curStart + 4] + record[curStart + 5] * 256 + record[curStart + 6] * 65536 + record[curStart + 7] * 16777216;
+						if (curID == "fmt ") {
+							waveNumChannels_ = record[curStart + 10];
+							waveSampleRate_ = record[curStart + 12] + record[curStart + 13] * 256 + record[curStart + 14] * 65536;
+							waveBlockSize_ = record[curStart + 20]; // 6 bytes bei 24/96
+							waveBitsPerSample_ = record[curStart + 22];
+						}
+						else if (curID == "data") {
+							waveStart_ = curStart + 8;
+							fsWave1.position = waveStart_;
+							totalBytes1 = curLen;
+							break;
+						}
+						else {
+							// ignored identifier
+						}
+						ixHdr = curStart + curLen + 7; // 8 - 1 because the loop counter will be incremented
+						if ((ixHdr + 1) % 2 != 0) {
+							ixHdr++;
+						}
+						curID = "";
+						curStart = ixHdr + 1;
+					}
+				}
+				
+				
+				var file2:File = new File (path2);
+				var fsWave2:FileStream = new FileStream();
+				fsWave2.open (file2, FileMode.READ);
+				var len2:Number = file1.size;
+				if (len2 + len1 > 0xfffffff0) { // fit to uint
+					waveFileSize_ = 0;
+					return 0;
+				}
+				var totalBytes2:uint = 0;
+				record = new Array();
+
+				hdrlen = len2;
+				if (hdrlen > 2000) { // header length
+					hdrlen = 2000;
+				}
+				for (var j:uint = 0; j < hdrlen; j++) {
+					var b2:uint = 0;
+					b2 = fsWave2.readUnsignedByte();
+					record.push (b2);
+				}
+				fsWave2.position = 0;
+				
+				ixHdr = 0;
+				curID = "";
+				for (; ixHdr < record.length; ixHdr++) {
+					if (record[ixHdr] > 0) {
+						curID += String.fromCharCode (record[ixHdr]);
+					}
+					if (ixHdr == 3) {
+						if (curID != "RIFF") {
+							return 0;
+						}
+					}
+					if (ixHdr == 7) {
+						curID = "";
+					}
+					if (ixHdr == 11) {
+						if (curID == "WAVE") {
+							break;
+						}
+						else {
+							return 0;
+						}
+					}
+				}
+				//totalBytes2 = record[4] + record[5] * 256 + record[6] * 65536 + record[7] * 16777216;
+
+				ixHdr++;
+				curStart = ixHdr;
+				curID = "";
+				for (; ixHdr < record.length; ixHdr++) {
+					curID += String.fromCharCode (record[ixHdr]);
+					if (ixHdr - curStart == 3) {
+						curLen = record[curStart + 4] + record[curStart + 5] * 256 + record[curStart + 6] * 65536 + record[curStart + 7] * 16777216;
+						if (curID == "fmt ") {
+							var numChannels:uint = record[curStart + 10];
+							var sampleRate:uint = record[curStart + 12] + record[curStart + 13] * 256 + record[curStart + 14] * 65536;
+							var bitsPerSample:uint = record[curStart + 22];
+							if (waveNumChannels_ != numChannels || waveSampleRate_ != sampleRate || waveBitsPerSample_ != bitsPerSample) {
+								return 0;
+							}
+						}
+						else if (curID == "data") {
+							waveStart_ = curStart + 8;
+							fsWave2.position = waveStart_;
+							totalBytes2 = curLen;
+							break;
+						}
+						else {
+							// ignored identifier
+						}
+						ixHdr = curStart + curLen + 7; // 8 - 1 because the loop counter will be incremented
+						if ((ixHdr + 1) % 2 != 0) {
+							ixHdr++;
+						}
+						curID = "";
+						curStart = ixHdr + 1;
+					}
+				}
+				
+				var fileout:File = new File (target);
+				var fsOut:FileStream = new FileStream();
+				fsOut.open (fileout, FileMode.WRITE);
+				var outLenRaw:uint = totalBytes1 + totalBytes2;
+				var outLen:uint = outLenRaw + 36;
+
+				fsOut.writeUTFBytes("RIFF");
+				writeUnsignedLE (fsOut, outLen, 4); // total size minus 8 bytes
+				fsOut.writeUTFBytes("WAVE");
+				fsOut.writeUTFBytes("fmt ");
+				writeUnsignedLE (fsOut, 16, 4); // header size
+				writeUnsignedLE (fsOut, 1, 2); // format
+				writeUnsignedLE (fsOut, waveNumChannels_, 2);
+				writeUnsignedLE (fsOut, waveSampleRate_, 4);
+				writeUnsignedLE (fsOut, waveSampleRate_ * waveBlockSize_, 4);
+				writeUnsignedLE (fsOut, waveBlockSize_, 2);
+				writeUnsignedLE (fsOut, waveBitsPerSample_, 2);
+				fsOut.writeUTFBytes("data");
+				writeUnsignedLE (fsOut, outLenRaw, 4);
+				
+				for (var f1:uint = 0; f1 < totalBytes1; f1++) {
+					fsOut.writeByte (fsWave1.readUnsignedByte());
+				}
+				fsWave1.close();
+				for (var f2:uint = 0; f2 < totalBytes2; f2++) {
+					fsOut.writeByte (fsWave2.readUnsignedByte());
+				}
+				fsWave2.close();
+				fsOut.close();
+				written = outLen + 8;
+			}
+			catch (error:Error) {
+				var msg:String = "Cannot read file !";
+				Alert.show( msg, "Error", Alert.OK);
+			}
 			
+			return written;
+		}
+		
+		static private function readWave (fs:FileStream, barray:ByteArray, littleEndian:Boolean):uint
+		{
+			var block:Array = new Array();
+			var valueSize:uint = waveBlockSize_ / waveNumChannels_;
+			var arrayIx:uint = waveBlockSize_;
+			var bytesIn1Chunk:uint = 101 * (waveSampleRate_  / 10) * waveBlockSize_; // load 10 sec + 100 ms
+			var val1:Number = 0;
+			var val2:Number = 0;
+			var maxPos:uint = waveStart_ + waveSize_;
+			var usedSampleCnt:uint = 0;
+			
+			var i:uint = 0;
+			for ( ; i < bytesIn1Chunk; i++) {
+				if (fs.bytesAvailable < 1) {
+					waveFilePosition_ = waveTotalBytes_;
+					break;
+				}
+				//waveFilePosition_ = fs.position;
+				var b:uint = fs.readUnsignedByte();
+				
+				block.push(b);
+				arrayIx--;
+
+				//if (waveNumChannels_ == 1) {
+				//	val2 = val1;
+				//}
+
+				if (arrayIx == 0) {
+					arrayIx = waveBlockSize_;
+					
+					var nextix:uint = 2;
+					var v1:uint = 0;
+					block.length = 0;
+					if (barray == null) {
+						wavechunk_1.writeFloat (val1);
+						wavechunk_1.writeFloat (val2);
+					}
+					else {
+						barray.writeFloat (val1);
+						barray.writeFloat (val2);
+					}
+				}
+			}
+			if (barray == null) {
+				wavechunk_1.position = 0;
+				usedSampleCnt = wavechunk_1.length / 8; // 4 bytes, 2 values
+			}
+			else {
+				barray.position = 0;
+				usedSampleCnt = barray.length / 8;
+			}
+			return usedSampleCnt; // number of samples
+		}
+
+
 		//=======================================================
 		// A string that contains a list of strings separated by line ends
 		// is converted to an array
@@ -1388,6 +1645,7 @@ WGo-2015-05-12: ConvertToAscii() had bug when creating c-string
 WGo-2015-06-18: parameter isSpace added to ConvertToAscii()
 WGo-2015-07-13: fade in after begin when begin > 0
 WGo-2015-08-26: Convert 96k to 44.1k
+WGo-2016-01-04: Concatenate wave files
 
 */
 

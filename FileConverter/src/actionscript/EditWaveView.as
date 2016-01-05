@@ -1,6 +1,7 @@
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.TimerEvent;
+import flash.filesystem.File;
 import flash.ui.Keyboard;
 import flash.utils.Timer;
 
@@ -28,6 +29,13 @@ protected function OnOK (event:FlexEvent):void
 {
 	actionOK();
 	event.preventDefault();
+}
+
+protected function OnConcat (event:FlexEvent):void
+{
+	//this.enabled = false;
+	FlexGlobals.topLevelApplication.ConcatWaveFile();
+	this.close();
 }
 
 private function actionOK():void
@@ -94,6 +102,7 @@ protected function OnKeyDown(event:KeyboardEvent):void
 		event.preventDefault();
 	}
 }
+
 
 
 //=======================================================

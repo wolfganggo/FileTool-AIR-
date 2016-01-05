@@ -38,4 +38,5 @@
 	
 	<s:Button id="bt_cancel" label="Cancel" right="100" bottom="10" width="60" buttonDown="OnCancel(event)"/>
 	<s:Button id="bt_ok" label="Create" right="20" bottom="10" width="60" buttonDown="OnOK(event)"/>
+	<s:Button id="bt_con" label="Append..." left="20" bottom="10" width="80" buttonDown="OnConcat(event)"/>
 </s:Window>
