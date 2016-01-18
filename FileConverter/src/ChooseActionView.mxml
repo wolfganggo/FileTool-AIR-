@@ -32,12 +32,17 @@
 				var key:uint = event.keyCode;
 				
 				if ((key >= Keyboard.A && key <= Keyboard.Z) || key == Keyboard.SPACE || key == Keyboard.ESCAPE) {
+					if (key == Keyboard.Y || key == Keyboard.C || key == Keyboard.M) {
+						FlexGlobals.topLevelApplication.enabled = false;
+					}
 					FlexGlobals.topLevelApplication.SetKeyAfterChooseActionView (key);
 					this.close();
 				}
 			}
 		]]>
 	</fx:Script>
+	
+	<s:Label id="version" text="Version 2.1.2" width="500" top="500" left="40"/>
 
 	<s:Label id="headline" text="Press key for one of the actions or any other key to close this window" width="500" top="20" left="40"/>
 
@@ -75,6 +80,4 @@
 
 	<s:Label id="helptext100" text="The button [Convert] creates a text representation of any binary file." width="500" top="460" left="40"/>
 	<s:Label id="helptext101" text="The button [Convert] recreates the binary file when the extension is 'binhex'." width="500" top="475" left="40"/>
-
-	<s:Label id="version" text="Version 2.1.1" width="500" top="500" left="40"/>
 </s:Window>

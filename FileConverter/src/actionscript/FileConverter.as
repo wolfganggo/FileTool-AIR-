@@ -1876,7 +1876,7 @@ public function SetKeyAfterChooseActionView (key:int):void
 	if (selpath == null || source == null || curDir == null) {
 		return;
 	}
-	var directory:File = curDir;
+	var dirFs:File = new File (curDir.nativePath); // for copy/move
 
 	if (key == Keyboard.D) {
 		try {
@@ -1937,12 +1937,12 @@ public function SetKeyAfterChooseActionView (key:int):void
 		if (lastTargetFolder_.length > 0) {
 			var last1:File = new File (lastTargetFolder_);
 			if (last1.exists) {
-				directory = last1;
+				dirFs = last1;
 			}
 		}
 		try {
-			directory.browseForDirectory("Select destination directory");
-			directory.addEventListener(Event.SELECT, directorySelectedYCp);
+			dirFs.browseForDirectory("Select destination directory");
+			dirFs.addEventListener(Event.SELECT, directorySelectedYCp);
 		}
 		catch (error:Error){
 			//trace("Failed:", error.message);
@@ -1975,12 +1975,12 @@ public function SetKeyAfterChooseActionView (key:int):void
 		if (lastTargetFolder_.length > 0) {
 			var last2:File = new File (lastTargetFolder_);
 			if (last2.exists) {
-				directory = last2;
+				dirFs = last2;
 			}
 		}
 		try {
-			directory.browseForDirectory("Select destination directory");
-			directory.addEventListener(Event.SELECT, directorySelectedCopy);
+			dirFs.browseForDirectory("Select destination directory");
+			dirFs.addEventListener(Event.SELECT, directorySelectedCopy);
 		}
 		catch (error:Error){
 			//trace("Failed:", error.message);
@@ -1990,12 +1990,12 @@ public function SetKeyAfterChooseActionView (key:int):void
 		if (lastTargetFolder_.length > 0) {
 			var last3:File = new File (lastTargetFolder_);
 			if (last3.exists) {
-				directory = last3;
+				dirFs = last3;
 			}
 		}
 		try {
-			directory.browseForDirectory("Select destination directory");
-			directory.addEventListener(Event.SELECT, directorySelectedMove);
+			dirFs.browseForDirectory("Select destination directory");
+			dirFs.addEventListener(Event.SELECT, directorySelectedMove);
 		}
 		catch (error:Error){
 			//trace("Failed:", error.message);
@@ -2038,6 +2038,7 @@ private function directorySelectedYCp(event:Event):void
 {
 	var paths:Array = fs_importFiles.selectedPaths;
 	if (paths != null && paths.length > 0) {
+		//this.enabled = false;
 		try {
 			var dest:File = event.target as File;
 
@@ -2052,6 +2053,7 @@ private function directorySelectedYCp(event:Event):void
 			Alert.show ("Error while copying file.", "Exception");
 		}
 	}
+	this.enabled = true;
 }
 
 private function directorySelectedCopy(event:Event):void 
@@ -2083,8 +2085,9 @@ private function directorySelectedCopyMove (dest:File, isMove:Boolean):void
 	lastTargetFolder_ = dest.nativePath;
 	var paths:Array = fs_importFiles.selectedPaths;
 	if (paths != null && paths.length > 0) {
-		try {
-			
+		//this.enabled = false;
+
+		try {	
 			for (var ix:int = 0; ix < paths.length; ix++) {
 				var source:File = new File (paths[ix]);
 				var destFile:File = dest.resolvePath (source.name);
@@ -2112,6 +2115,7 @@ private function directorySelectedCopyMove (dest:File, isMove:Boolean):void
 		catch (error:Error) {
 			Alert.show ("Error while copying file.", "Exception");
 		}
+		this.enabled = true;
 	}
 	if (isMove) {
 		var timer:Timer = new Timer(50, 1);
@@ -2138,6 +2142,7 @@ private function askForCopyMove():void
 		fileToCopyMove_ = filesToMove_.pop();
 	}
 	else {
+		this.enabled = true;
 		return;
 	}
 	
@@ -2148,6 +2153,7 @@ private function OverwriteCopyMoveHandler (event:CloseEvent):void
 {
 	try {
 		if (event.detail == Alert.YES) {
+			//this.enabled = false;
 			var src:File = fileToCopyMove_.kSource;
 			var dest:File = fileToCopyMove_.kDestination;
 			src.copyTo (dest, true);
@@ -2162,6 +2168,7 @@ private function OverwriteCopyMoveHandler (event:CloseEvent):void
 	var timer:Timer = new Timer(50, 1);
 	timer.addEventListener (TimerEvent.TIMER, OnAskCopyMoveTimer);
 	timer.start();
+	this.enabled = true;
 }
 
 private function OnAskCopyMoveTimer (event:TimerEvent):void
@@ -2783,6 +2790,7 @@ WGo-2015-04-13: Copy + Move tested
 WGo-2015-11-03: RemoveDSStoreFiles on key Z
 WGo-2016-01-04: Concatenate wave files
 WGo-2016-01-05: Find Exif data also in JFIF file
+WGo-2016-01-18: disable window while copying
 
 */
 
