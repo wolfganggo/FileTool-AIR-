@@ -873,7 +873,10 @@ protected function OnKeyDown(event:KeyboardEvent):void
 			lastVersion_ = edittx.text;
 			edittx.insertText (curName_);
 			isModified_ = true;
-			if (this.title.charAt (this.title.length - 1) != "*") {
+			if (this.title.length < 3) {
+				this.title += " *";
+			}
+			else if (this.title.charAt (this.title.length - 1) != "*" && this.title.charAt (this.title.length - 2) != " ") {
 				this.title += " *";
 			}
 		}
@@ -1099,7 +1102,10 @@ private function replaceText (newStr:String, all:Boolean):void
 	var beginPos:int = edittx.selectionAnchorPosition;
 	var endPos:int = edittx.selectionActivePosition;
 	var part3:String = "";
-	
+	var addLen:int = newStr.length - searchStr_.length;
+	var newSel:int = endPos + addLen;
+	var fdcount:int = findTextCount (searchStr_, caseSensitive_, wholeWords_);
+
 	if (!all) {
 		if (beginPos < 0 || endPos < 0 || endPos <= beginPos) {
 			return;
@@ -1109,6 +1115,7 @@ private function replaceText (newStr:String, all:Boolean):void
 		part3 = edittx.text.substring (endPos);
 		edittx.text = edittx.text.substring (0, beginPos);
 		edittx.text += newStr + part3;
+		edittx.selectRange (newSel, newSel);
 	}
 	
 	findText();
@@ -1126,14 +1133,20 @@ private function replaceText (newStr:String, all:Boolean):void
 			part3 = edittx.text.substring (endPos);
 			edittx.text = edittx.text.substring (0, beginPos);
 			edittx.text += newStr + part3;
+			newSel = endPos + addLen;
+			edittx.selectRange (newSel, newSel);
 			
 			findText();
 			
-		} while (endPos > -1);
+			fdcount--;
+		} while (endPos > -1 && fdcount > 0);
 	}
 
 	isModified_ = true;
-	if (this.title.charAt (this.title.length - 1) != "*") {
+	if (this.title.length < 3) {
+		this.title += " *";
+	}
+	else if (this.title.charAt (this.title.length - 1) != "*" && this.title.charAt (this.title.length - 2) != " ") {
 		this.title += " *";
 	}
 }
@@ -1709,7 +1722,10 @@ protected function OnTextChanging (event:TextOperationEvent):void
 		return;
 	}
 	isModified_ = true;
-	if (this.title.charAt (this.title.length - 1) != "*") {
+	if (this.title.length < 3) {
+		this.title += " *";
+	}
+	else if (this.title.charAt (this.title.length - 1) != "*" && this.title.charAt (this.title.length - 2) != " ") {
 		this.title += " *";
 	}
 }

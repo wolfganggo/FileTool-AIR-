@@ -42,7 +42,7 @@
 		]]>
 	</fx:Script>
 	
-	<s:Label id="version" text="Version 2.1.2" width="500" top="500" left="40"/>
+	<s:Label id="version" text="Version 2.1.003" width="500" top="500" left="40"/>
 
 	<s:Label id="headline" text="Press key for one of the actions or any other key to close this window" width="500" top="20" left="40"/>
 

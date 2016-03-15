@@ -606,7 +606,10 @@ protected function OnKeyDown(event:KeyboardEvent):void
 				hexInputStr_ = "";
 				tx_status.text = "Cmd/Ctrl-J for hex input";
 				isModified_ = true;
-				if (this.title.charAt (this.title.length - 1) != "*") {
+				if (this.title.length < 3) {
+					this.title += " *";
+				}
+				else if (this.title.charAt (this.title.length - 1) != "*" && this.title.charAt (this.title.length - 2) != " ") {
 					this.title += " *";
 				}
 				lastPos_ = edittx.selectionActivePosition;
@@ -1086,7 +1089,10 @@ protected function OnTextHasChanged (event:TextOperationEvent):void
 		return;
 	}
 	isModified_ = true;
-	if (this.title.charAt (this.title.length - 1) != "*") {
+	if (this.title.length < 3) {
+		this.title += " *";
+	}
+	else if (this.title.charAt (this.title.length - 1) != "*" && this.title.charAt (this.title.length - 2) != " ") {
 		this.title += " *";
 	}
 	lastPos_ = edittx.selectionActivePosition;
@@ -1196,9 +1202,10 @@ private function findText():void
 	if (searchStr_.length == 0) {
 		return;
 	}
+	var txtpos:int = curPos - curPos / lineLength_;
 	//var allText:String = edittx.text;
 	//var pos:int = findNextIndexOf (searchStr_, allText, curPos);
-	var pos:int = findNextIndexOf (searchStr_, rawContentString_, curPos);
+	var pos:int = findNextIndexOf (searchStr_, rawContentString_, txtpos + 1);
 	if (pos == -1) {
 		pos = findNextIndexOf (searchStr_, rawContentString_, 0);
 	}
@@ -1220,7 +1227,7 @@ private function findTextBackwards():void
 	if (searchStr_.length == 0) {
 		return;
 	}
-	//var allText:String = edittx.text;
+	var txtpos:int = curPos - curPos / lineLength_;
 	
 	var pos:int = 0; 
 	var foundpos:int = -1; 
@@ -1228,7 +1235,7 @@ private function findTextBackwards():void
 	do {
 		//foundpos = findNextIndexOf (searchStr_, allText, pos);
 		foundpos = findNextIndexOf (searchStr_, rawContentString_, pos);
-		if (foundpos > curPos - searchStr_.length - 1 || foundpos < 0) {
+		if (foundpos > txtpos - searchStr_.length - 1 || foundpos < 0) {
 			break;
 		}
 		pos += searchStr_.length;
@@ -1256,7 +1263,6 @@ private function setFoundSelection (first:int, second:int):void
 private function findNextIndexOf (srchstr:String, txt:String, pos:int):int 
 {
 	var curPos:int = pos;
-	var len:int = srchstr.length;
 	var foundPos:int = -1;
 	do {
 		foundPos = txt.indexOf (srchstr, curPos);
@@ -1265,6 +1271,7 @@ private function findNextIndexOf (srchstr:String, txt:String, pos:int):int
 		}
 		curPos += srchstr.length;
 	} while (foundPos < 0 && curPos < txt.length);
+
 	return foundPos;
 }
 
@@ -1300,6 +1307,9 @@ private function replaceText (newStr:String, all:Boolean):void
 	var beginPos:int = edittx.selectionAnchorPosition;
 	var endPos:int = edittx.selectionActivePosition;
 	var part3:String = "";
+	var addLen:int = newStr.length - searchStr_.length;
+	var newSel:int = endPos + addLen;
+	var fdcount:int = findTextCount (searchStr_);
 	
 	if (!all) {
 		if (beginPos < 0 || endPos < 0 || endPos <= beginPos) {
@@ -1310,6 +1320,7 @@ private function replaceText (newStr:String, all:Boolean):void
 		part3 = edittx.text.substring (endPos);
 		edittx.text = edittx.text.substring (0, beginPos);
 		edittx.text += newStr + part3;
+		edittx.selectRange (newSel, newSel);
 		getRawTextAndUpdate(false);
 	}
 	
@@ -1328,15 +1339,21 @@ private function replaceText (newStr:String, all:Boolean):void
 			part3 = edittx.text.substring (endPos);
 			edittx.text = edittx.text.substring (0, beginPos);
 			edittx.text += newStr + part3;
+			newSel = endPos + addLen;
+			edittx.selectRange (newSel, newSel);
 			getRawTextAndUpdate(false);
 			
 			findText();
 			
-		} while (endPos > -1);
+			fdcount--;
+		} while (endPos > -1 && fdcount > 0);
 	}
 	
 	isModified_ = true;
-	if (this.title.charAt (this.title.length - 1) != "*") {
+	if (this.title.length < 3) {
+		this.title += " *";
+	}
+	else if (this.title.charAt (this.title.length - 1) != "*" && this.title.charAt (this.title.length - 2) != " ") {
 		this.title += " *";
 	}
 }
@@ -1386,6 +1403,7 @@ WGo-2015-04-01: "find" over line breaks with correct selection
 WGo-2015-04-07: find dialog remembers entries
 WGo-2015-04-08: hex input with Cmd-J also in find dialog
 WGo-2015-11-03: new empty file had invalid content_
+WGo-2016-03-15: Replace All improved
 
 */
 
