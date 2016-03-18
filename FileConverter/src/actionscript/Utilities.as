@@ -1203,7 +1203,7 @@ package actionscript
 			return maxval; // in 32 bit format
 		}
 			
-		static public function concatWaveFiles (path1:String, path2:String, target:String):uint
+		static public function concatWaveFiles (path1:String, path2:String, target:String, offset:uint):uint
 		{
 			var written:uint = 0;
 			try {
@@ -1269,8 +1269,8 @@ package actionscript
 							waveBitsPerSample_ = record[curStart + 22];
 						}
 						else if (curID == "data") {
-							waveStart_ = curStart + 8;
-							fsWave1.position = waveStart_;
+							//waveStart_ = curStart + 8;
+							fsWave1.position = curStart + 8;
 							totalBytes1 = curLen;
 							break;
 						}
@@ -1290,41 +1290,41 @@ package actionscript
 				var file2:File = new File (path2);
 				var fsWave2:FileStream = new FileStream();
 				fsWave2.open (file2, FileMode.READ);
-				var len2:Number = file1.size;
+				var len2:Number = file2.size;
 				if (len2 + len1 > 0xfffffff0) { // fit to uint
 					waveFileSize_ = 0;
 					return 0;
 				}
 				var totalBytes2:uint = 0;
-				record = new Array();
+				var record2:Array = new Array();
 
-				hdrlen = len2;
-				if (hdrlen > 2000) { // header length
-					hdrlen = 2000;
+				var hdrlen2:Number = len2;
+				if (hdrlen2 > 2000) { // header length
+					hdrlen2 = 2000;
 				}
-				for (var j:uint = 0; j < hdrlen; j++) {
+				for (var j:uint = 0; j < hdrlen2; j++) {
 					var b2:uint = 0;
 					b2 = fsWave2.readUnsignedByte();
-					record.push (b2);
+					record2.push (b2);
 				}
 				fsWave2.position = 0;
 				
-				ixHdr = 0;
-				curID = "";
-				for (; ixHdr < record.length; ixHdr++) {
-					if (record[ixHdr] > 0) {
-						curID += String.fromCharCode (record[ixHdr]);
+				var ixHdr2:int = 0;
+				var curID2:String = "";
+				for (; ixHdr2 < record2.length; ixHdr2++) {
+					if (record2[ixHdr2] > 0) {
+						curID2 += String.fromCharCode (record2[ixHdr2]);
 					}
-					if (ixHdr == 3) {
-						if (curID != "RIFF") {
+					if (ixHdr2 == 3) {
+						if (curID2 != "RIFF") {
 							return 0;
 						}
 					}
-					if (ixHdr == 7) {
-						curID = "";
+					if (ixHdr2 == 7) {
+						curID2 = "";
 					}
-					if (ixHdr == 11) {
-						if (curID == "WAVE") {
+					if (ixHdr2 == 11) {
+						if (curID2 == "WAVE") {
 							break;
 						}
 						else {
@@ -1334,37 +1334,48 @@ package actionscript
 				}
 				//totalBytes2 = record[4] + record[5] * 256 + record[6] * 65536 + record[7] * 16777216;
 
-				ixHdr++;
-				curStart = ixHdr;
-				curID = "";
-				for (; ixHdr < record.length; ixHdr++) {
-					curID += String.fromCharCode (record[ixHdr]);
-					if (ixHdr - curStart == 3) {
-						curLen = record[curStart + 4] + record[curStart + 5] * 256 + record[curStart + 6] * 65536 + record[curStart + 7] * 16777216;
-						if (curID == "fmt ") {
-							var numChannels:uint = record[curStart + 10];
-							var sampleRate:uint = record[curStart + 12] + record[curStart + 13] * 256 + record[curStart + 14] * 65536;
-							var bitsPerSample:uint = record[curStart + 22];
+				ixHdr2++;
+				var curStart2:uint = ixHdr2;
+				var curLen2:uint = 0;
+				curID2 = "";
+				for (; ixHdr2 < record2.length; ixHdr2++) {
+					curID2 += String.fromCharCode (record2[ixHdr2]);
+					if (ixHdr2 - curStart2 == 3) {
+						curLen2 = record2[curStart2 + 4] + record2[curStart2 + 5] * 256 + record2[curStart2 + 6] * 65536 + record2[curStart2 + 7] * 16777216;
+						if (curID2 == "fmt ") {
+							var numChannels:uint = record2[curStart2 + 10];
+							var sampleRate:uint = record2[curStart2 + 12] + record2[curStart2 + 13] * 256 + record2[curStart2 + 14] * 65536;
+							var bitsPerSample:uint = record2[curStart2 + 22];
 							if (waveNumChannels_ != numChannels || waveSampleRate_ != sampleRate || waveBitsPerSample_ != bitsPerSample) {
 								return 0;
 							}
 						}
-						else if (curID == "data") {
-							waveStart_ = curStart + 8;
-							fsWave2.position = waveStart_;
-							totalBytes2 = curLen;
+						else if (curID2 == "data") {
+							//waveStart_ = curStart2 + 8;
+							fsWave2.position = curStart2 + 8;
+							totalBytes2 = curLen2;
 							break;
 						}
 						else {
 							// ignored identifier
 						}
-						ixHdr = curStart + curLen + 7; // 8 - 1 because the loop counter will be incremented
-						if ((ixHdr + 1) % 2 != 0) {
-							ixHdr++;
+						ixHdr2 = curStart2 + curLen2 + 7; // 8 - 1 because the loop counter will be incremented
+						if ((ixHdr2 + 1) % 2 != 0) {
+							ixHdr2++;
 						}
-						curID = "";
-						curStart = ixHdr + 1;
+						curID2 = "";
+						curStart2 = ixHdr2 + 1;
 					}
+				}
+				
+				if (offset > 0) {
+					var delaySmp:uint = offset * waveSampleRate_ / 1000;
+					var delayBytes:uint = delaySmp * waveBlockSize_;
+					if (delayBytes >= totalBytes2) {
+						return 0;
+					}
+					fsWave2.position += delayBytes;
+					totalBytes2 -= delayBytes;
 				}
 				
 				var fileout:File = new File (target);

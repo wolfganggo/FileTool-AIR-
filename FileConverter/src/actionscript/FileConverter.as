@@ -91,6 +91,7 @@ private var lastTargetFolder_:String = "";
 private var wave_in1_:String = "";
 private var wave_in2_:String = "";
 private var wave_out_:String = "";
+private var beg_wave2_:uint = 0;
 
 //=======================================================
 
@@ -2315,8 +2316,9 @@ public function EditWaveFile (begin:uint, len:uint, norm:Boolean, swap:Boolean, 
 	}
 }
 
-public function ConcatWaveFile():void
+public function ConcatWaveFile(begin:uint):void
 {
+	beg_wave2_ = begin;
 	var path:String = fs_importFiles.selectedPath;
 	if (path != null && path.length > 0) {
 		var dir:String = fs_importFiles.directory.nativePath;
@@ -2357,7 +2359,10 @@ private function fileSelectedConcat(event:Event):void
 
 private function OnAfterConcatTimer(event:TimerEvent):void
 {
-	Utilities.concatWaveFiles (wave_in1_, wave_in2_, wave_out_);
+	var len:uint = Utilities.concatWaveFiles (wave_in1_, wave_in2_, wave_out_, beg_wave2_);
+	if (len == 0) {
+		Alert.show ("Could not concat the files.", "Problem when concatenating wave files");
+	}
 	this.enabled = true;
 	fs_importFiles.refresh();
 	//OnFileChoose();

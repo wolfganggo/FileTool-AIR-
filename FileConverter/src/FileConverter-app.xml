@@ -27,7 +27,7 @@
 	<!-- <version>0.1.001</version> -->
 	<!-- A string value of the format <0-999>.<0-999>.<0-999> --> 
 	<!-- *** Change also in ChooseActionView.mxml *** -->
-	<versionNumber>2.1.003</versionNumber>
+	<versionNumber>2.1.004</versionNumber>
 	<!-- A string value (such as "v1", "2.5", or "Alpha 1") --> 
 	<!-- <versionLabel></versionLabel> -->
 

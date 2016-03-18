@@ -34,7 +34,11 @@ protected function OnOK (event:FlexEvent):void
 protected function OnConcat (event:FlexEvent):void
 {
 	//this.enabled = false;
-	FlexGlobals.topLevelApplication.ConcatWaveFile();
+	var beg:int = 0;
+	if (tx_beg_concat.text.length > 0) {
+		beg = parseInt (tx_beg_concat.text, 10);
+	}
+	FlexGlobals.topLevelApplication.ConcatWaveFile(beg);
 	this.close();
 }
 
@@ -112,6 +116,7 @@ protected function OnKeyDown(event:KeyboardEvent):void
 WGo-2015-01-30: created
 WGo-2015-02-02: timer needed to change the button text + disable dialog, handle ESCAPE + ENTER
 WGo-2015-03-20: fade in and out
+WGo-2016-03-18: Concat files with offset in msec for second file
 
 */
 

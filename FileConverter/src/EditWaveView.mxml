@@ -4,7 +4,9 @@
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 windowComplete="OnWindowComplete()"
 		 title="Create wave file copy"
-		 height="410" width="420"
+		 height="440" width="420"
+		 maximizable="false"
+		 resizable="false"
 		 alwaysInFront="true"
 		 >
 	<fx:Declarations>
@@ -35,7 +37,10 @@
 	<s:RadioButton groupName="rbGroupOut" id="rb_out2" label="2 seconds" width="80" left="210" top="270"/>
 	<s:RadioButton groupName="rbGroupOut" id="rb_out5" label="5 seconds" width="80" left="210" top="290"/>
 	<s:RadioButton groupName="rbGroupOut" id="rb_out10" label="10 seconds" width="80" left="210" top="310"/>
-	
+
+	<s:Label text="Begin (msec):" top="340" left="10" width="80"/>
+	<s:TextInput id="tx_beg_concat" fontSize="12" top="340" left="90" width="100" height="18"/>
+
 	<s:Button id="bt_cancel" label="Cancel" right="100" bottom="10" width="60" buttonDown="OnCancel(event)"/>
 	<s:Button id="bt_ok" label="Create" right="20" bottom="10" width="60" buttonDown="OnOK(event)"/>
 	<s:Button id="bt_con" label="Append..." left="20" bottom="10" width="80" buttonDown="OnConcat(event)"/>
