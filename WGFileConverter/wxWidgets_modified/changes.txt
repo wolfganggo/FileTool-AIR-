@@ -1,0 +1,7 @@
+filename.cpp
+
+#if wxUSE_LONGLONG
+//extern const wxULongLong wxInvalidSize = (unsigned)-1;
+extern const wxULongLong wxInvalidSize = 0xffffffffffffffff;
+#endif // wxUSE_LONGLONG
+
