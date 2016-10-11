@@ -631,7 +631,10 @@ private function showExifInfo():void
 	const make_id:uint = 0x010f;
 	const model_id:uint = 0x0110;
 	const orient_id:uint = 0x0112;
-	const date_id:uint = 0x0132;
+	const version_id:uint = 0x0131; // creator
+	//const date_id:uint = 0x0132;
+	const moddate_id:uint = 0x0132;  // used by PhotoShop
+	const date_id:uint = 0x9003;
 	const exposure_id:uint = 0x829a;
 	const fnum_id:uint = 0x829d;
 	const sens_id:uint = 0x8827;
@@ -642,6 +645,7 @@ private function showExifInfo():void
 	const program_id:uint = 0x8822;
 	const lensmake_id:uint = 0xa433;
 	const lensmodel_id:uint = 0xa434;
+	const lensmodel2_id:uint = 0x0051;  // private from Panasonic (GH1), length can be shorter
 	const metering_id:uint = 0x9207;
 	const whitebal_id:uint = 0xA403;
 	const bias_id:uint = 0x9204;
@@ -651,7 +655,9 @@ private function showExifInfo():void
 	var makestr:String = "";
 	var modelstr:String = "";
 	var orientstr:String = "";
+	var creatorstr:String = "";
 	var datestr:String = "";
+	var moddatestr:String = "";
 	var expostr:String = "";
 	var fnumstr:String = "";
 	var sensstr:String = "";
@@ -670,8 +676,8 @@ private function showExifInfo():void
 
 	var prestr:String = "";
 	
-	if (len > 10000) {
-		len = 10000;
+	if (len > 20000) {
+		len = 20000;
 	}
 	for (var iy:uint = 0; iy < 64; iy++) {
 		var b1:uint = 0;
@@ -747,9 +753,20 @@ private function showExifInfo():void
 	if (getExifValueFromString (record, lensmodel_id, entry, littleEnd)) {
 		lensmodelstr += entry.kStr;
 	}
+	else if (getExifValueFromString (record, lensmodel2_id, entry, littleEnd)) {
+		lensmodelstr += entry.kStr;
+	}
+	creatorstr = "Creator:   ";
+	if (getExifValueFromString (record, version_id, entry, littleEnd)) {
+		creatorstr += entry.kStr;
+	}
 	datestr = "Date:   ";
 	if (getExifValueFromString (record, date_id, entry, littleEnd)) {
 		datestr += entry.kStr;
+	}
+	moddatestr = "Date modified:   ";
+	if (getExifValueFromString (record, moddate_id, entry, littleEnd)) {
+		moddatestr += entry.kStr;
 	}
 	orientstr = "Orientation:   ";
 	if (getExifValueFromShort (record, orient_id, entry, littleEnd)) {
@@ -916,7 +933,8 @@ private function showExifInfo():void
 			lightsourcestr += "unknown light source";
 		}
 	}
-	infostr += makestr + "\n" + modelstr + "\n" + lensmakestr + "\n" + lensmodelstr + "\n" + datestr + "\n" + sensstr + "\n"
+	infostr += makestr + "\n" + modelstr + "\n" + lensmakestr + "\n" + lensmodelstr + "\n" + creatorstr + "\n"
+		+ datestr + "\n" + moddatestr + "\n" + sensstr + "\n"
 		+ expostr + "\n" + fnumstr + "\n" + focalstr + "\n" + orientstr + "\n" + programstr + "\n" + flashstr + "\n"
 		+ meteringstr + "\n" + whitebalstr + "\n" + biasstr + "\n"+ cspacestr + "\n" + expomodestr + "\n" + lightsourcestr;
 
@@ -946,7 +964,7 @@ private function getExifValueFromString (arr:Array, id:uint, value:Object, littl
 				else {
 					len = arr[pos + 2] * 65536 + arr[pos + 3];
 				}
-				if (len < 100) {
+				if (len < 1000) {
 					var offs:uint = 0;
 					var arlen:int = arr.length;
 					if (littleEnd) {
@@ -957,12 +975,28 @@ private function getExifValueFromString (arr:Array, id:uint, value:Object, littl
 					}
 					for (var ix:int = offs / 2; ix < arlen; ix++) {
 						if (littleEnd) {
-							value.kStr += String.fromCharCode (arr[ix] % 256); // second byte at first
-							value.kStr += String.fromCharCode (arr[ix] / 256);
+							var val1:uint = arr[ix] % 256;
+							if (val1 == 0) { // Panasonic lens entry can have wrong length
+								break;
+							}
+							value.kStr += String.fromCharCode (val1); // second byte at first
+							var val2:uint = arr[ix] / 256;
+							if (val2 == 0) {
+								break;
+							}
+							value.kStr += String.fromCharCode (val2);
 						}
 						else {
-							value.kStr += String.fromCharCode (arr[ix] / 256);
-							value.kStr += String.fromCharCode (arr[ix] % 256);
+							var val3:uint = arr[ix] / 256;
+							if (val3 == 0) {
+								break;
+							}
+							value.kStr += String.fromCharCode (val3);
+							var val4:uint = arr[ix] % 256;
+							if (val4 == 0) {
+								break;
+							}
+							value.kStr += String.fromCharCode (val4);
 						}
 						if (value.kStr.length >= len) {
 							break;
@@ -1183,6 +1217,8 @@ WGo-2015-02-19: zoom + pan works
 WGo-2015-02-20: title with name, index, zoom
 WGo-2015-03-05: Images with meta data 'Portrait' rotated, but zoom does not work
 WGo-2016-01-05: Find Exif data also in JFIF file
+WGo-2016-09-14: date id changed to original
+WGo-2016-09-28: read Panasonic lens, string entries need more tolerance for length
 
 */
 

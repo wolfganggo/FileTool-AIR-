@@ -1398,11 +1398,72 @@ package actionscript
 				fsOut.writeUTFBytes("data");
 				writeUnsignedLE (fsOut, outLenRaw, 4);
 				
+				var lastBytes:Array = new Array();
+				var byte1:uint = 0;
 				for (var f1:uint = 0; f1 < totalBytes1; f1++) {
-					fsOut.writeByte (fsWave1.readUnsignedByte());
+					byte1 = fsWave1.readUnsignedByte();
+					if (f1 >= totalBytes1 - waveBlockSize_) {
+						lastBytes.push (byte1);
+					}
+					fsOut.writeByte (byte1);
 				}
 				fsWave1.close();
-				for (var f2:uint = 0; f2 < totalBytes2; f2++) {
+				
+				var firstBytes:Array = new Array();
+				var byte2:uint = 0;
+				var firstcnt:uint = waveBlockSize_ * 20;
+				for (var f2:uint = 0; f2 < firstcnt; f2++) {
+					byte2 = fsWave2.readUnsignedByte();
+					if (f2 >= firstcnt - waveBlockSize_) {
+						firstBytes.push (byte2);
+					}
+				}
+				
+				var nextix:uint = 2;
+				var v1:uint = 0;
+				var v2:uint = 0;
+				var vold_l:int = 0;
+				var vold_r:int = 0;
+				var vnew_l:int = 0;
+				var vnew_r:int = 0;
+				var outlen:int = 2;
+				var outshift:int = 16;
+				var valueSize:int = (waveBitsPerSample_ > 16 ? 3 : 2);
+				if (valueSize == 2) {
+					v1 = (lastBytes[0] << 16) + (lastBytes[1] << 24);
+					v2 = (firstBytes[0] << 16) + (firstBytes[1] << 24);
+				}
+				else {
+					v1 = (lastBytes[0] << 8) + (lastBytes[1] << 16) + (lastBytes[2] << 24);
+					v2 = (firstBytes[0] << 8) + (firstBytes[1] << 16) + (firstBytes[2] << 24);
+					nextix = 3;
+					outshift = 8;
+					outlen = 3;
+				}
+				vold_l = int(v1);
+				vnew_l = int(v2);
+				if (numChannels == 2) {
+					if (valueSize == 2) {
+						v1 = (lastBytes[nextix] << 16) + (lastBytes[nextix + 1] << 24);
+						v2 = (firstBytes[nextix] << 16) + (firstBytes[nextix + 1] << 24);
+					}
+					else {
+						v1 = (lastBytes[nextix + 0] << 8) + (lastBytes[nextix + 1] << 16) + (lastBytes[nextix + 2] << 24);
+						v2 = (firstBytes[nextix + 0] << 8) + (firstBytes[nextix + 1] << 16) + (firstBytes[nextix + 2] << 24);
+					}
+					vold_r = int(v1);
+					vnew_r = int(v2);
+				}
+				var step_l:int = (vold_l - vnew_l) / 20;
+				var step_r:int = (vold_r - vnew_r) / 20;
+				for (var st:uint = 0; st < 20; st++) {
+					writeSignedLE (fsOut, vold_l - step_l * (st + 1), outlen, outshift);
+					if (numChannels == 2) {
+						writeSignedLE (fsOut, vold_r - step_r * (st + 1), outlen, outshift);
+					}
+				}
+
+				for (; f2 < totalBytes2; f2++) {
 					fsOut.writeByte (fsWave2.readUnsignedByte());
 				}
 				fsWave2.close();
@@ -1657,6 +1718,7 @@ WGo-2015-06-18: parameter isSpace added to ConvertToAscii()
 WGo-2015-07-13: fade in after begin when begin > 0
 WGo-2015-08-26: Convert 96k to 44.1k
 WGo-2016-01-04: Concatenate wave files
+WGo-2016-09-28: concatWaveFiles() tries to smooth the edge
 
 */
 
